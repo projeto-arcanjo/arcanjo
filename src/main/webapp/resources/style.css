@@ -1,0 +1,109 @@
+body {
+	font-size:12px !important;
+}
+
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+
+.pointer {
+	cursor : pointer;
+}
+
+
+.bg {
+    background-image: url("img/wallpaper.jpg");
+    **background-color : #FFFFFF !important;
+}
+
+.login-box, .register-box {
+    width: 360px;
+    margin: 50px auto;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.fieldsModuleBody {
+	font-family: monospace;
+    font-size: 10px;
+}
+	
+.fieldsModuleHeader {
+	border: 1px solid;
+    background-color: #cacaca;
+    font-family: monospace;
+    font-size: 10px;
+    font-weight: bold;	
+}
+
+.tableModule {
+	width : 100%;
+}
+
+.tableModule th {
+	border: 1px solid !important;
+	padding-left: 2px !important;
+    padding-right: 2px !important;	
+}
+
+.tableModule td {
+	border: 1px solid !important;
+	padding-left: 2px !important;
+    padding-right: 2px !important;	
+}
+
+
+
+.chart { height: 600px; margin: 5px; width: 100%; }
+.Treant > .node {  }
+.Treant > p { }
+.node-name { font-weight: bold;}
+.node-contact { font-style: italic; }
+
+.node p {
+	margin:0px !important;
+}
+
+.classDiagramTree {
+    padding: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #ffffff;
+    border: 1px solid #000;
+    width: 190px;
+    font-family: Monospace;
+    font-size: 10px;
+}
+
+.classDiagramTree img {
+    margin-right : 10px;
+    margin-left : 5px;
+    width  : 25px;
+    height : 26px;
+}
+
