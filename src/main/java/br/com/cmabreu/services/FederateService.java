@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import br.com.cmabreu.federates.XPlaneAircraftManager;
 import br.com.cmabreu.misc.EncoderDecoder;
 import br.com.cmabreu.misc.FederateAmbassador;
 import br.com.cmabreu.model.AttributeValue;
