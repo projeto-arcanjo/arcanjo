@@ -3,7 +3,6 @@ package br.com.cmabreu.services;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.cmabreu.misc.EncoderDecoder;
 import br.com.cmabreu.misc.FederateAmbassador;
-import br.com.cmabreu.model.AttributeValue;
 import br.com.cmabreu.model.AttributeValueList;
 import br.com.cmabreu.model.InteractionValue;
 import br.com.cmabreu.model.Module;
@@ -25,7 +23,6 @@ import br.com.cmabreu.rti1516e.Attribute;
 import br.com.cmabreu.rti1516e.InteractionClass;
 import br.com.cmabreu.rti1516e.ObjectClass;
 import br.com.cmabreu.rti1516e.ObjectInstance;
-import hla.rti1516e.AttributeHandle;
 import hla.rti1516e.AttributeHandleSet;
 import hla.rti1516e.AttributeHandleValueMap;
 import hla.rti1516e.CallbackModel;
@@ -440,8 +437,11 @@ public class FederateService {
 		logger.info("New attribute packet update arrived. Must update " + theAttributes.size() + " attributes.");
 		
 		AttributeValueList avl = new AttributeValueList();
-		int objectHandle = encoderDecoder.getObjectHandle( theObject );
-
+		// int objectHandle = encoderDecoder.getObjectHandle( theObject );
+		
+		
+		
+		
 		
 		if( avl.getValues().size() > 0 ) 
 			simpMessagingTemplate.convertAndSend("/attributes/reflectvalues", avl ); 
@@ -449,30 +449,7 @@ public class FederateService {
 			logger.error("Cannot decode attribute packet.");	
 	}
 
-	private Attribute getAttribute( Integer handle, Integer objectHandle ) {
-		logger.info("Searching for attribute [" + handle + "] in discovered instance " + objectHandle );
 		
-		for( ObjectInstance instance : this.getInstances() ) {
-			
-			ObjectClass objectClass = instance.getObjectClass();
-			logger.info(" > scanning " + instance.getObjectName() + " of class " + objectClass.getMyName() );
-			for( Attribute attribute : objectClass.getAttributes() ) {
-				logger.info( "   > attribute " +  attribute.getName() + " = " + attribute.getHandle() ); 
-				if( ( attribute.getHandle() != null ) && attribute.getHandle().equals( handle ) ) {
-					logger.info( "   > found attribute " + attribute.getName() + " in " + instance.getObjectName() + " (" + instance.getObjectClass().getMyName() + ")");
-					return attribute;
-				}
-			}
-			
-		}
-		
-		
-		logger.info("Attribute [" + handle + "] not found.");
-		return null;
-		
-	}
-	
-	
 	public void removeObjectInstance(ObjectInstanceHandle theObject, byte[] tag, OrderType orderType, SupplementalRemoveInfo supInfo) {
 		Integer handle = encoderDecoder.getObjectHandle( theObject );
 		if( instanceExists( handle ) ) {

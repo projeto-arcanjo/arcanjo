@@ -37,7 +37,7 @@ public class XPlaneAircraftManager {
 		return  other == decoder.getObjectClassHandle( this.entityHandle );
 	}
 	
-	public XPlaneAircraftManager( RTIambassador rtiAmb ) throws Exception {
+	public XPlaneAircraftManager( RTIambassador rtiAmb) throws Exception {
 		logger.info("X-Plane Aircraft Manager ativo");
 		this.decoder = new EncoderDecoder();
 		this.aircrafts = new ArrayList<XPlaneAircraft>();
@@ -51,22 +51,21 @@ public class XPlaneAircraftManager {
 		this.entityTypeHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "EntityType");        
 		this.entityIdentifierHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "EntityIdentifier");  
 		this.spatialHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "Spatial");  
-		// this.attributeDamageState = this.rtiAmb.getAttributeHandle( this.classHandle, "DamageState");   
 		this.forceIdentifierHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "ForceIdentifier");  
 		this.isConcealedHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "IsConcealed");   
 		this.markingHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "Marking");  	                   
 		this.damageStateHandle = this.rtiAmb.getAttributeHandle(entityHandle, "DamageState");
 		
-        AttributeHandleSet attributeSet = this.rtiAmb.getAttributeHandleSetFactory().create();
-		attributes.add(entityTypeHandle);
-		attributes.add(spatialHandle);
-		attributes.add(forceIdentifierHandle);
-		attributes.add(markingHandle);
-		attributes.add(isConcealedHandle);
-		attributes.add(entityIdentifierHandle);
-		attributeSet.add( this.damageStateHandle );
+        AttributeHandleSet attributes = this.rtiAmb.getAttributeHandleSetFactory().create();
+		attributes.add( this.entityTypeHandle );
+		attributes.add( this.spatialHandle );
+		attributes.add( this.forceIdentifierHandle );
+		attributes.add( this.markingHandle );
+		attributes.add( this.isConcealedHandle );
+		attributes.add( this.entityIdentifierHandle );
+		attributes.add( this.damageStateHandle );
         
-        this.rtiAmb.subscribeObjectClassAttributes( this.entityHandle, attributeSet );   
+        this.rtiAmb.subscribeObjectClassAttributes( this.entityHandle, attributes );   
         
         this.interactionHandle = this.rtiAmb.getInteractionClassHandle("Acknowledge");
         this.rtiAmb.subscribeInteractionClass(interactionHandle);
