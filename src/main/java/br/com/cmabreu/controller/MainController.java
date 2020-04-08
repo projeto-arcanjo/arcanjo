@@ -35,6 +35,13 @@ public class MainController extends BasicController  {
 		return "dashboard";
 	}	
 	
+	@RequestMapping(value = "/mapa", method = RequestMethod.GET)
+	public String mapa(Model model, HttpSession session ) {
+		model.addAttribute( "user", getLoggedUser( session ) );
+		model.addAttribute( "midasLocation", getMidasLocation() );
+		return "mapa";
+	}	
+
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public String home(Model model, HttpSession session ) {
 		UserLesserDTO udto = getLoggedUser( session );

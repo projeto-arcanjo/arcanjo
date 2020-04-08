@@ -7,14 +7,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.cmabreu.federates.XPlaneAircraft;
+import br.com.cmabreu.interfaces.IPhysicalEntityManager;
 import br.com.cmabreu.misc.EncoderDecoder;
 import hla.rti1516e.AttributeHandle;
 import hla.rti1516e.AttributeHandleSet;
 import hla.rti1516e.InteractionClassHandle;
 import hla.rti1516e.ObjectClassHandle;
+import hla.rti1516e.ObjectInstanceHandle;
 import hla.rti1516e.RTIambassador;
 
-public class XPlaneAircraftManager {
+public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 	private RTIambassador rtiAmb;
 	
 	private InteractionClassHandle interactionHandle; 
@@ -31,11 +33,53 @@ public class XPlaneAircraftManager {
 	private List<XPlaneAircraft> aircrafts;
 	private EncoderDecoder decoder;
 	private Logger logger = LoggerFactory.getLogger( XPlaneAircraftManager.class );
-	
+
+	/** **************************************************************************************************************  
+	* 
+	* 	Metodos da interface IPhysicalEntityManager
+	* 
+	******************************************************************************************************************/
+	@Override
 	public boolean isAKindOfMe( ObjectClassHandle classHandle ) {
 		int other = decoder.getObjectClassHandle( classHandle );
 		return  other == decoder.getObjectClassHandle( this.entityHandle );
 	}
+	
+	@Override
+	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName ) {
+		int handle = decoder.getObjectHandle( theObject );
+		System.out.println("Nova aeronave '" + objectName + "' descoberta: Handle " + handle );
+		try {
+			XPlaneAircraft xpac = new XPlaneAircraft( theObject, this, objectName );
+			aircrafts.add( xpac );
+		} catch ( Exception e ) {
+			logger.error("Erro ao criar aeronave: " + e.getMessage() );
+		}
+	}
+	
+	// Verifica se este controlador possui algum objeto instanciado com este handle
+	@Override
+	public XPlaneAircraft doIHaveThisObject( ObjectInstanceHandle theObject ) {
+		int other = decoder.getObjectHandle( theObject );
+		for( XPlaneAircraft ac : this.aircrafts ) {
+			if( other == decoder.getObjectHandle( ac.getTheObjectInstance() ) ) return ac;
+		}
+		return null;
+	}
+	
+	@Override
+	public void removeObjectInstance(ObjectInstanceHandle theObject){
+		int other = decoder.getObjectHandle( theObject );
+		for( XPlaneAircraft ac : this.aircrafts ) {
+			if( other == decoder.getObjectHandle( ac.getTheObjectInstance() ) ) {
+				logger.error("Preciso remover a aeronave '" + ac.getObjectName() + "' mas nao sei como. Ela continua comigo!");
+				// REMOVE DA LISTA
+			}
+		}
+	}
+	
+	/** **************************************************************************************************************  */
+	
 	
 	public XPlaneAircraftManager( RTIambassador rtiAmb) throws Exception {
 		logger.info("X-Plane Aircraft Manager ativo");
@@ -85,4 +129,46 @@ public class XPlaneAircraftManager {
 	public List<XPlaneAircraft> getAircrafts() {
 		return aircrafts;
 	}
+
+	public InteractionClassHandle getInteractionHandle() {
+		return interactionHandle;
+	}
+
+	public ObjectClassHandle getEntityHandle() {
+		return entityHandle;
+	}
+
+	public AttributeHandle getEntityTypeHandle() {
+		return entityTypeHandle;
+	}
+
+	public AttributeHandle getSpatialHandle() {
+		return spatialHandle;
+	}
+
+	public AttributeHandle getForceIdentifierHandle() {
+		return forceIdentifierHandle;
+	}
+
+	public AttributeHandle getMarkingHandle() {
+		return markingHandle;
+	}
+
+	public AttributeHandle getIsConcealedHandle() {
+		return isConcealedHandle;
+	}
+
+	public AttributeHandle getEntityIdentifierHandle() {
+		return entityIdentifierHandle;
+	}
+
+	public AttributeHandle getDamageStateHandle() {
+		return damageStateHandle;
+	}
+
+	public EncoderDecoder getDecoder() {
+		return decoder;
+	}
+	
+	
 }

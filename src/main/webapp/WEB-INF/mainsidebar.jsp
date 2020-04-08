@@ -16,11 +16,11 @@
 			</div>
 		</div>
 		<ul class="sidebar-menu" data-widget="tree">
-			<li class="header">MAIN NAVIGATION</li>
+			<li class="header">NAVEGAÇÃO</li>
 
 			<li>
 				<a href="/"> 
-					<i class="fa fa-home"></i><span> Main</span>
+					<i class="fa fa-home"></i><span> Home</span>
 				</a>
 			</li>
 
@@ -30,10 +30,16 @@
 					<i class="fa fa-dashboard"></i><span> Dashboard</span>
 				</a>
 			</li>
+			<li>
+				<a href="/mapa"> 
+					<i class="fa fa-map"></i><span> Mapa</span>
+				</a>
+			</li>
 			
-			<li class="header">FEDERATION DETAILS</li>
+			<li class="header">FEDERAÇÃO</li>
 
-			 
+
+<!-- 			 
 			<li class="treeview">
 				<a href="#"> 
 					<i class="fa fa-gears"></i><span> Federations</span>
@@ -43,11 +49,11 @@
 				</a>
 				<ul id="menuFederations" class="treeview-menu"></ul>					
 			</li>
- 			
+ -->			
 
 			<li class="treeview">
 				<a href="#">
-					<i class="fa fa-map-pin"></i><span> Federates</span>
+					<i class="fa fa-map-pin"></i><span> Federados</span>
 						<span class="pull-right-container"> 
 							<i class="fa fa-angle-left pull-right"></i>
 						</span> 
@@ -58,7 +64,7 @@
 
 			<li class="treeview">
 				<a href="#">
-					<i class="fa fa-cubes"></i><span> Modules</span>
+					<i class="fa fa-cubes"></i><span> Modulos</span>
 						<span class="pull-right-container"> 
 							<i class="fa fa-angle-left pull-right"></i>
 						</span> 
@@ -74,24 +80,24 @@
 							<i class="fa fa-angle-left pull-right"></i>
 						</span> 
 				</a>
-				<ul id="menuClasses" class="treeview-menu"><li><a href="#"><i class="fa fa-circle-o text-red"></i>We need a tree</a></li></ul>					
+				<ul id="menuClasses" class="treeview-menu"><li><a href="#"><i class="fa fa-circle-o text-red"></i>Não implementado</a></li></ul>					
 			</li>
 		    
 			<li class="treeview">
 				<a href="#">
-					<i class="fa fa-bolt"></i><span> Interactions</span> 
+					<i class="fa fa-bolt"></i><span> Interações</span> 
 						<span class="pull-right-container"> 
 							<i class="fa fa-angle-left pull-right"></i>
 						</span> 
 				</a>
-				<ul id="menuInteractions" class="treeview-menu"><li><a href="#"><i class="fa fa-circle-o text-red"></i>We need a tree</a></li></ul>					
+				<ul id="menuInteractions" class="treeview-menu"><li><a href="#"><i class="fa fa-circle-o text-red"></i>Não implementado</a></li></ul>					
 			</li>
 
 
 						
 			<li class="treeview">
 				<a href="#">
-					<i class="fa fa-car"></i><span> Instances</span> 
+					<i class="fa fa-car"></i><span> Instancias</span> 
 						<span class="pull-right-container"> 
 							<i class="fa fa-angle-left pull-right"></i>
 						</span> 

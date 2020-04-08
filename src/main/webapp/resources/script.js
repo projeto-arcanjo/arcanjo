@@ -403,6 +403,58 @@ function updateInstances( objectInstance ){
 	addInstanceToIFace( objectInstance );
 }
 
+
+function startMap(){
+	
+	var baseOsmProvider = new Cesium.createOpenStreetMapImageryProvider({
+		url : 'https://a.tile.openstreetmap.org/'
+	});	
+	
+	viewer = new Cesium.Viewer('cesiumContainer',{
+		//terrainProvider : terrainProvider,
+		timeline: false,
+		animation: false,
+		baseLayerPicker: false,
+		skyAtmosphere: false,
+		fullscreenButton : false,
+		geocoder : false,
+		homeButton : false,
+		infoBox : false,
+		sceneModePicker : false,
+		selectionIndicator : false,
+		navigationHelpButton : false,
+		requestRenderMode : true,
+	    imageryProvider: baseOsmProvider,
+	    scene3DOnly : false,
+	    shouldAnimate : true
+	});
+	
+    // MACETES - ESCONDER ELEMENTOS "DESNECESSARIOS"
+    jQuery(".cesium-viewer-bottom").hide();
+    jQuery(".cesium-viewer-navigationContainer").hide();
+    jQuery(".cesium-viewer-zoomIndicatorContainer").hide();
+    jQuery(".cesium-viewer-toolbar").hide();
+    jQuery(".navigation-controls").hide();
+    jQuery(".compass").hide();
+    jQuery(".distance-legend").css( {"border": "none", "background-color" : "rgb(60, 141, 188, 0.5)", "height" : 25, "bottom": 60, "right" : 61, "border-radius": 0} );
+    jQuery(".distance-legend-label").css( {"font-size": "11px", "font-weight":"bold",  "line-height" : 0, "color" : "white", "font-family": "Consolas"} );
+    jQuery(".distance-legend-scale-bar").css( {"height": "9px", "top" : 10, "border-color" : "white"} );
+	
+    
+    var ccs = document.getElementById("cesiumContainer").style;
+    ccs.width='100%';ccs.height='100%';    
+	
+}
+
+function applyMargins() {
+	var cbbHeight = $("#cesiumBoxBody").height();
+	jQuery(".content-wrapper").css({"height": cbbHeight});
+	jQuery(".content-wrapper").css({"min-height": cbbHeight});
+}
+
+jQuery(window).on("resize", applyMargins);
+
 connect();
+startMap();
 
 

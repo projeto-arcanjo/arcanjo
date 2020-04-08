@@ -46,8 +46,8 @@ public class FederateAmbassador extends NullFederateAmbassador {
 
 	@Override
 	public void provideAttributeValueUpdate(ObjectInstanceHandle theObject,	AttributeHandleSet theAttributes, byte[] userSuppliedTag) throws FederateInternalError {
-		logger.info( "provideAttributeValueUpdate " + theObject.toString() );
-		federateService.provideAttributeValueUpdate( theObject, theAttributes, userSuppliedTag );
+		//logger.info( "provideAttributeValueUpdate " + theObject.toString() );
+		//federateService.provideAttributeValueUpdate( theObject, theAttributes, userSuppliedTag );
 	}	
 	
 	@Override

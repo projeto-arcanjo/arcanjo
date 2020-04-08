@@ -13,17 +13,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import br.com.cmabreu.interfaces.IPhysicalEntity;
+import br.com.cmabreu.interfaces.IPhysicalEntityManager;
 import br.com.cmabreu.misc.EncoderDecoder;
 import br.com.cmabreu.misc.FederateAmbassador;
-import br.com.cmabreu.model.AttributeValueList;
 import br.com.cmabreu.model.InteractionValue;
 import br.com.cmabreu.model.Module;
 import br.com.cmabreu.model.ObjectClassList;
-import br.com.cmabreu.rti1516e.Attribute;
 import br.com.cmabreu.rti1516e.InteractionClass;
 import br.com.cmabreu.rti1516e.ObjectClass;
 import br.com.cmabreu.rti1516e.ObjectInstance;
-import hla.rti1516e.AttributeHandleSet;
 import hla.rti1516e.AttributeHandleValueMap;
 import hla.rti1516e.CallbackModel;
 import hla.rti1516e.FederateAmbassador.SupplementalReceiveInfo;
@@ -55,7 +54,7 @@ public class FederateService {
 	private boolean constrained;
 	private boolean advancing;
 	
-	private XPlaneAircraftManager xPlaneAircraftManager;
+	private List<IPhysicalEntityManager> physicalEntities;
 	
     @Value("${federation.fomfolder}")
     String fomFolder;	
@@ -73,7 +72,6 @@ public class FederateService {
 	private SimpMessagingTemplate simpMessagingTemplate;       
     
 	public FederateService() {
-		super();
 		try {
 			this.encoderDecoder = new EncoderDecoder();
 		} catch ( Exception e ) {
@@ -139,24 +137,13 @@ public class FederateService {
     private void subscribeToAll() throws Exception {
     	parseModules();
 
-    	this.xPlaneAircraftManager = new XPlaneAircraftManager( rtiamb );
     	
+		// Adiciona todo tipo de controladores de entidades em uma lista
+		// dessa forma, quando chegar eventos eu posso descobrir
+		// que tipo de controlador deve processar o evento.
+		this.physicalEntities = new ArrayList<IPhysicalEntityManager>();
+		this.physicalEntities.add( new XPlaneAircraftManager( rtiamb ) );
     	
-		// Fill the interaction classes with respective handles
-    	// and Subscribe to Interaction Root to receive anything
-		for( InteractionClass interaction : moduleProcessorService.getInteractionClassList().getList() ) {
-			String iName = interaction.getFullName();
-			try {
-				InteractionClassHandle iHandle = rtiamb.getInteractionClassHandle( iName );
-				rtiamb.subscribeInteractionClass( iHandle );
-				Integer cHandle = encoderDecoder.getInteractionHandle( iHandle );
-				interaction.setHandle( cHandle );
-				logger.info(" > Interaction " + iName + " registred as handle " + cHandle );
-			} catch ( Exception e ) {
-				logger.error( "Error when getting handle for " + e.getMessage() );
-			}
-		}
-		
 		
     }
     
@@ -218,28 +205,6 @@ public class FederateService {
 	/*
 			METHODS USED BY CONTROLLERS
 	*/
-	
-	// Request an update for all MOM attributes 
-    public void refreshData() {
-		for( ObjectInstance instance : this.getInstances() ) {
-			ObjectInstanceHandle objectInstanceHandle = encoderDecoder.getObjectHandle( instance.getObjectInstanceHandle() );
-			ObjectClass objectClass = instance.getObjectClass();
-			try {
-				AttributeHandleSet attributeHS = rtiamb.getAttributeHandleSetFactory().create();
-				for( Attribute attribute : objectClass.getAttributes() ) {
-					if( attribute.getHandle() != null ) {
-						logger.info( "Ask RTI to send me attribute [" + attribute.getHandle() + "] " + attribute.getName() + " of " + instance.getObjectName() );
-						attributeHS.add( encoderDecoder.getAttributeHandle( attribute.getHandle() ) );
-					}
-				}
-				rtiamb.requestAttributeValueUpdate( objectInstanceHandle, attributeHS, "Request Attribute Update".getBytes() );
-			} catch ( Exception e ) {
-				logger.error("Error in attribute update request: " + e.getMessage() );
-				e.printStackTrace();
-			}
-			
-		}
-    }
 	
 	
 	// Modules
@@ -403,9 +368,11 @@ public class FederateService {
 	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName ) {
 		logger.info("new object (handle " + theObject + ") discovered: " + objectName + " of class " + theObjectClass );
 		
-		
-		if( xPlaneAircraftManager.isAKindOfMe( theObjectClass ) ) {
-			
+		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
+		for( IPhysicalEntityManager pe : this.physicalEntities ) {
+			if( pe.isAKindOfMe( theObjectClass ) ) {
+				pe.discoverObjectInstance( theObject, theObjectClass, objectName );
+			}
 		}
 		
 		
@@ -428,33 +395,40 @@ public class FederateService {
 		}
 	}
 
-	public void provideAttributeValueUpdate( ObjectInstanceHandle theObject, AttributeHandleSet theAttributes, byte[] userSuppliedTag ) {
-		// Nothing to do since the panel is passive and have no object ownership
-		// May I notify the frontend?
-	}
-
 	public void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
-		logger.info("New attribute packet update arrived. Must update " + theAttributes.size() + " attributes.");
-		
-		AttributeValueList avl = new AttributeValueList();
-		// int objectHandle = encoderDecoder.getObjectHandle( theObject );
 		
 		
+		// Procura qual controlador possui a instancia deste objeto e passa o evento pra ele
+		try {
+			for( IPhysicalEntityManager pem : this.physicalEntities ) {
+				IPhysicalEntity pe = pem.doIHaveThisObject(theObject);
+				if( pe != null ) {
+					pe.reflectAttributeValues( theObject, theAttributes, tag, sentOrder);
+				}
+			}
+		} catch ( Exception e ) {
+			logger.error("Erro ao receber atualizacao de atributos");
+		}
 		
 		
-		
-		if( avl.getValues().size() > 0 ) 
-			simpMessagingTemplate.convertAndSend("/attributes/reflectvalues", avl ); 
-		else
-			logger.error("Cannot decode attribute packet.");	
+		// Atualizar interface !!
+		// simpMessagingTemplate.convertAndSend("/attributes/reflectvalues", avl ); 
 	}
 
 		
 	public void removeObjectInstance(ObjectInstanceHandle theObject, byte[] tag, OrderType orderType, SupplementalRemoveInfo supInfo) {
 		Integer handle = encoderDecoder.getObjectHandle( theObject );
-		if( instanceExists( handle ) ) {
-			instanceRemove( handle );
+		
+		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
+		for( IPhysicalEntityManager pem : this.physicalEntities ) {
+			IPhysicalEntity pe = pem.doIHaveThisObject(theObject);
+			if( pe != null ) {
+				pem.removeObjectInstance( theObject );
+			}
 		}
+		
+		// Remove do meu controle (interface)
+		instanceRemove( handle );
 		simpMessagingTemplate.convertAndSend("/instances/remove", handle );
 	}
 
@@ -490,22 +464,6 @@ public class FederateService {
 			OrderType orderType, TransportationTypeHandle transportationTypeHandle, SupplementalReceiveInfo supplementalReceiveInfo) {
 		String federateName = "";
 		
-		System.out.println("Incoming interaction...");
-		
-		/*
-		if( supplementalReceiveInfo.hasProducingFederate() ) {
-			FederateHandle fh = supplementalReceiveInfo.getProducingFederate();
-			Integer federateHandle = encoderDecoder.getFederateHandle( fh );
-			// Get the actual federate here.
-			for( ObjectInstance instance : getInstances() ) {
-				System.out.println(" > " + instance.getObjectInstanceHandle() + ": " + instance.getObjectName() );
-				if( instance.getObjectInstanceHandle().equals( federateHandle ) ) {
-					federateName = instance.getObjectName();
-				}
-			}
-		}
-		*/
-
 		Integer interactionClassHandle = encoderDecoder.getInteractionHandle( ich );
 		Integer parameterCount = parameterHandleValueMap.size();
 		String interactionName = "";
@@ -541,6 +499,11 @@ public class FederateService {
 			if( !obj.getObjectName().startsWith("MOM.Federat") ) result++;
 		}
 		return result;
+	}
+
+	public void refreshData() {
+		logger.warn("A interface chamou REFRESH mas nao sei o que fazer ainda.");
+		
 	}
     
     
