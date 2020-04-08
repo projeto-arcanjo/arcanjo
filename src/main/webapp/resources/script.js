@@ -41,6 +41,16 @@ function connect() {
 			var payload =  JSON.parse( notification.body );
 			updateInstances( payload );
 		});
+
+		stompClient.subscribe('/aircrafts/reflectvalues', function(notification) {
+			var payload =  JSON.parse( notification.body );
+			updateAircrafts( payload );
+		});
+		
+		stompClient.subscribe('/aircrafts/discovered', function(notification) {
+			var payload =  JSON.parse( notification.body );
+			newAircraft( payload );
+		});
 		
 		$("#federationStatusText").text("Starting...");
 		$("#federationStatusIcon").removeClass("text-danger");
@@ -84,6 +94,15 @@ function connect() {
     
 }
 
+
+function newAircraft( payload ){
+	console.log( payload);
+}
+
+
+function updateAircrafts( payload ){
+	console.log( payload);
+}
 
 function refreshData(){
 	$.ajax({
@@ -440,21 +459,19 @@ function startMap(){
     jQuery(".distance-legend-label").css( {"font-size": "11px", "font-weight":"bold",  "line-height" : 0, "color" : "white", "font-family": "Consolas"} );
     jQuery(".distance-legend-scale-bar").css( {"height": "9px", "top" : 10, "border-color" : "white"} );
 	
-    
-    var ccs = document.getElementById("cesiumContainer").style;
-    ccs.width='100%';ccs.height='100%';    
-	
 }
 
 function applyMargins() {
-	var cbbHeight = $("#cesiumBoxBody").height();
-	jQuery(".content-wrapper").css({"height": cbbHeight});
-	jQuery(".content-wrapper").css({"min-height": cbbHeight});
+	jQuery(".cesium-viewer").css({"height": "100%", "width": "100%"});
+	jQuery(".cesium-viewer-cesiumWidgetContainer").css({"height": "100%", "width": "100%"});
+	jQuery(".cesium-widget").css({"height": "100%", "width": "100%"});
+	jQuery(".cesium-widget canvas").css({"height": "100%", "width": "100%"});
 }
 
 jQuery(window).on("resize", applyMargins);
 
 connect();
 startMap();
+applyMargins();
 
 

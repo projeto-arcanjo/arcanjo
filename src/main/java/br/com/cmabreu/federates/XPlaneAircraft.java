@@ -2,6 +2,7 @@ package br.com.cmabreu.federates;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import br.com.cmabreu.codec.Codec;
 import br.com.cmabreu.codec.SpatialVariant;
@@ -70,7 +71,8 @@ public class XPlaneAircraft implements IPhysicalEntity {
 	}
 
 	@Override
-	public void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) throws Exception {
+	public XPlaneAircraft reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, 
+			byte[] tag, OrderType sentOrder, SimpMessagingTemplate simpMessagingTemplate) throws Exception {
 		 
 		for (AttributeHandle attributeHandle : theAttributes.keySet() ) {
 			// Guarda os valores do atributo 
@@ -84,6 +86,10 @@ public class XPlaneAircraft implements IPhysicalEntity {
 			
 		}
 		
+		simpMessagingTemplate.convertAndSend("/aircrafts/reflectvalues", this ); 
+		
+		return this;
+		
 	}
 
 	// Processa os atributos que chegaram via RTI
@@ -91,10 +97,14 @@ public class XPlaneAircraft implements IPhysicalEntity {
 		SpatialVariant sv = this.codec.decodeSpatialVariant( bytes );
 		double[] wl = sv.getWorldLocation();
 		
-		System.out.println("Recebi os dados de posicao: ");
+		System.out.println("Recebi os dados de posicao (" + this.objectName + "): ");
 		System.out.println(" > LAT " + wl[Environment.LAT] );
 		System.out.println(" > LON " + wl[Environment.LON] );
 		System.out.println(" > ALT " + wl[Environment.ALT] );
+		
+		this.latitude = wl[Environment.LAT];
+		this.longitude = wl[Environment.LON];
+		this.altitude = wl[Environment.ALT];
 		
 	}
 

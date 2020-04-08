@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import br.com.cmabreu.federates.XPlaneAircraft;
 import br.com.cmabreu.interfaces.IPhysicalEntityManager;
@@ -46,12 +47,13 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 	}
 	
 	@Override
-	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName ) {
+	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName, SimpMessagingTemplate simpMessagingTemplate ) {
 		int handle = decoder.getObjectHandle( theObject );
 		System.out.println("Nova aeronave '" + objectName + "' descoberta: Handle " + handle );
 		try {
 			XPlaneAircraft xpac = new XPlaneAircraft( theObject, this, objectName );
 			aircrafts.add( xpac );
+			simpMessagingTemplate.convertAndSend("/aircrafts/discovered", xpac ); 
 		} catch ( Exception e ) {
 			logger.error("Erro ao criar aeronave: " + e.getMessage() );
 		}

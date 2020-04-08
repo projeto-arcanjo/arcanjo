@@ -371,7 +371,7 @@ public class FederateService {
 		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
 		for( IPhysicalEntityManager pe : this.physicalEntities ) {
 			if( pe.isAKindOfMe( theObjectClass ) ) {
-				pe.discoverObjectInstance( theObject, theObjectClass, objectName );
+				pe.discoverObjectInstance( theObject, theObjectClass, objectName, simpMessagingTemplate );
 			}
 		}
 		
@@ -397,22 +397,18 @@ public class FederateService {
 
 	public void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
 		
-		
 		// Procura qual controlador possui a instancia deste objeto e passa o evento pra ele
 		try {
 			for( IPhysicalEntityManager pem : this.physicalEntities ) {
 				IPhysicalEntity pe = pem.doIHaveThisObject(theObject);
 				if( pe != null ) {
-					pe.reflectAttributeValues( theObject, theAttributes, tag, sentOrder);
+					pe.reflectAttributeValues( theObject, theAttributes, tag, sentOrder, simpMessagingTemplate);
 				}
 			}
 		} catch ( Exception e ) {
 			logger.error("Erro ao receber atualizacao de atributos");
 		}
 		
-		
-		// Atualizar interface !!
-		// simpMessagingTemplate.convertAndSend("/attributes/reflectvalues", avl ); 
 	}
 
 		

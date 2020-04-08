@@ -75,7 +75,7 @@
          <hr class="footer-fixed">
          <div class="container footer-container">
    <div class="pull-right hidden-xs">
-     Powered By <a target="_BLANK" href="http://timpokorny.github.io/public/about/index.html">Calytrix's PorticoRTI</a>
+     Ministério da Defesa
    </div>
    <!-- Default to the left -->
    <strong>Plataforma de Simulação Arcanjo</strong> 

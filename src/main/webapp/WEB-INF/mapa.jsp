@@ -63,9 +63,8 @@
 					<div class="col-md-9 col-sm-12 col-xs-12">
 					
 						<div class="box box-primary">
-							<div class="box-header"><h3 class="box-title">Caixa Reserva</h3></div>
 							<div class="box-body" id="cesiumBoxBody" style="height:400px">
-								<div style="height:398px;width:670px" id="cesiumContainer"></div>
+								<div style="width:100%; height:100%" id="cesiumContainer"></div>
 							</div>	
 						</div>
 						
