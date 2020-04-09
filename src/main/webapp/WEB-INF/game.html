@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>SPATIAL ILLUSIONS - Game Aware</title>
+<style type="text/css">
+	body{
+		font-family: Verdana, Verdana, Geneva, sans-serif;
+		font-weight: normal;
+		font-size: 15px;
+		background-color: #202020;
+		margin-top:0px;
+		margin-left: 0px;
+   		margin-right: 0px;
+   		color:#f0f0f0;	
+	}
+
+	.page{
+	position: absolute; 
+	left: 0px; 
+	top: 0px; 
+		width: 100%;
+		height: 100%;
+	}
+		html, body {
+		height: 100%;
+	}
+	a{
+		color: rgb(140, 255, 140);
+	}
+	.h1{
+    	bottom: 0;
+		left: 10px;
+		font-family: Helvetica, arial, freesans, clean, sans-serif;
+font-size: 30px;
+font-style: normal;
+font-variant: normal;
+font-weight: normal;
+line-height: 1.2;
+    	color: rgb(0,168,220);
+    	margin-top: 5px;
+margin-bottom: 5px;
+	}
+	.h2{
+font-family: Helvetica, arial, freesans, clean, sans-serif;
+font-size: 23px;
+font-style: normal;
+font-variant: normal;
+font-weight: normal;
+line-height: 1.2;
+    	color: rgb(0,168,220);
+    	margin-top: 5px;
+margin-bottom: 5px;
+	}
+		.h3{
+font-family: Helvetica, arial, freesans, clean, sans-serif;
+font-size: 20px;
+font-style: normal;
+font-variant: normal;
+font-weight: normal;
+line-height: 1.2;
+    	color: rgb(0,168,220);
+    	margin-top: 5px;
+margin-bottom: 5px;
+
+	}
+		.heading{
+		height: 50px;
+		width: 100%;
+		background-color:rgb(0,168,220);
+		position: relative;	
+
+
+	}
+	.heading a{
+		font-size: 20px;
+		text-decoration: none;
+    	position: relative; 
+    	top: 12px;
+		left: 10px;
+font-family: Helvetica, arial, freesans, clean, sans-serif;
+font-weight: normal;
+    	color: #fff;	
+	}
+	.logo{
+    	position: absolute; 
+    	bottom: 10px;
+		right: 10px;    	
+	}
+
+	.mymap{
+		position: absolute; 
+		left: 0px; 
+		top: 50px; 
+		bottom: 0px; 
+		right: 103mm;
+	}
+	
+	#MainSidebar{
+	position: absolute; 
+	width: 100mm; 
+	top: 50px; 
+	right: 0px;
+	bottom: 0px;
+	background-color:#ffffff;
+	border-left:3px solid #202020;
+	color:#202020;
+	padding:5px;
+    z-index:100;
+	overflow: auto;
+	font-size: 12px;
+	}
+
+	#SubSidebar{
+	position: absolute; 
+	width: 280px;
+	height: 100px; 
+	bottom: 0px; 
+	right: 0px;
+	background-color:#ffffff;
+	border-left:3px solid #202020;
+	border-top:3px solid #202020;
+	color:#202020;
+	padding:5px;
+    z-index:100;
+	overflow: auto;
+	font-size: 12px;
+	}
+
+	
+
+</style>
+
+
+<script src="/resources/milsymbols.js"  type="text/javascript" ></script>
+
+<script  type="text/javascript" >
+
+/* =======================================================================================
+
+Copyright (c) 2013 Måns Beckman
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the <organization> nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------------------------------------------------------------------------------------------
+
+For updates and more information go to http://www.spatialillusions.com
+
+======================================================================================= */
+
+var map;
+var marker;
+var orbat = [];
+
+var gameAwareLayer = new L.layerGroup();
+var gameAwareEnabled = false;
+var gameAwareIcons = {	F:new MilSymbol("SFG-",{size:9}).symbolMarker(),
+						H:new MilSymbol("SHG-",{size:9}).symbolMarker(),
+						N:new MilSymbol("SNG-",{size:9}).symbolMarker(),
+						U:new MilSymbol("SUG-",{size:9}).symbolMarker()}
+						
+function init(){
+	var cloudmadeUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+		cloudmadeAttribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+		cloudmade = L.tileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution}),
+		latlng = L.latLng(48.566611608294686,8.389434814453125);
+
+	map = L.map('map', {center: latlng, zoom: 9, layers: [cloudmade]});
+	
+	//initiate with json
+	var json = '{"type": "FeatureCollection","features": [{"type": "Feature","geometry": {"type": "Point","coordinates":[8.389434814453125,48.566611608294686]},"properties": {"dyn":false,"SIDC":"SFG-UCI----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[8.249359130859375,48.45653041501911]},"properties": {"dyn":false,"SIDC":"SFG-UCI----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[8.2342529296875,48.69911856401931]},"properties": {"dyn":false,"SIDC":"SFG-UCI----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[8.59130859375,48.91888968903368]},"properties": {"dyn":false,"SIDC":"SFG-UCI----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[10.2117919921875,49.221185044221336]},"properties": {"dyn":false,"SIDC":"SHG-UCI----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[10.074462890625,48.83941303819501]},"properties": {"dyn":false,"SIDC":"SHG-UCI----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[10.5029296875,48.84664340683584]},"properties": {"dyn":false,"SIDC":"SHG-UCI----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[10.530395507812498,49.30363576187125]},"properties": {"dyn":false,"SIDC":"SHG-UCI----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[9.656982421875,49.081062364320736]},"properties": {"dyn":false,"SIDC":"SHG-UCR----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[9.6514892578125,48.71271258145237]},"properties": {"dyn":false,"SIDC":"SHG-UCR----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[9.107666015625,48.95497369808868]},"properties": {"dyn":false,"SIDC":"SFG-UCR----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[8.9154052734375,48.76343113791796]},"properties": {"dyn":false,"SIDC":"SFG-UCR----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[8.6737060546875,48.545705491847464]},"properties": {"dyn":false,"SIDC":"SFG-UCA----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[10.0579833984375,49.14937676724421]},"properties": {"dyn":false,"SIDC":"SHG-UCA----D","M":"","T":""}},{"type": "Feature","geometry": {"type": "Point","coordinates":[9.8931884765625,48.8032455364465]},"properties": {"dyn":false,"SIDC":"SHG-UCA----D","M":"","T":""}}]}';
+	var obj = JSON.parse(json).features;
+	process(obj);
+	
+	map.on('move',gameAware);
+	map.on('zoomend',gameAware);
+
+}
+
+function process(obj){
+	for (var id in obj){
+		var sidc = obj[id].properties.SIDC;
+
+		var uniqueDesignation = obj[id].properties.T;
+		var higherFormation = obj[id].properties.M;	
+		i = orbat.length 
+		orbat[i] = new Object();
+		if(orbat[i-1]==undefined){orbat[i].id = 1;}else{orbat[i].id = parseInt(orbat[i-1].id)+1;}
+
+		orbat[i].MilSymbol = new MilSymbol(sidc,{size:30})
+		orbat[i].MilSymbol.uniqueDesignation = uniqueDesignation;
+		orbat[i].MilSymbol.higherFormation = higherFormation;
+		orbat[i].symbol = orbat[i].MilSymbol.symbolMarker();
+
+		orbat[i].icon = L.divIcon({	className: 'test', 
+							html : orbat[i].symbol.textXML, 
+							iconAnchor: new L.Point(orbat[i].symbol.x, orbat[i].symbol.y)});
+
+		orbat[i].marker = L.marker([obj[id].geometry.coordinates[1], obj[id].geometry.coordinates[0]],{icon:orbat[i].icon, draggable:!orbat[i].dynamicPlacement}).addTo(map); 
+
+		orbat[i].marker.id = orbat[i].id; 
+	}
+	
+	gameAware();
+}
+
+// GAME AWARE
+
+function gameAware(){
+	map.removeLayer(gameAwareLayer)
+	gameAwareLayer = new L.layerGroup();
+	var mapBounds = map.getBounds();
+	var mapBoundsCenter = mapBounds.getCenter()
+	
+	pSW = map.options.crs.latLngToPoint(mapBounds.getSouthWest(), map.getZoom());
+	pNE = map.options.crs.latLngToPoint(mapBounds.getNorthEast(), map.getZoom());
+	pCenter = map.options.crs.latLngToPoint(mapBoundsCenter, map.getZoom());
+
+	var viewBounds = L.latLngBounds(map.options.crs.pointToLatLng(L.point(pSW.x - (pCenter.x - pSW.x ), pSW.y - (pCenter.y - pSW.y )), map.getZoom()) , map.options.crs.pointToLatLng(L.point(pNE.x + (pNE.x - pCenter.x) , pNE.y + (pNE.y - pCenter.y) ), map.getZoom()) );
+
+	for (var id in orbat){
+		if(map.hasLayer(orbat[id].marker)){
+			//Icons in Twilight zone 
+			markerLatLng = orbat[id].marker.getLatLng();
+			if(	viewBounds.contains(markerLatLng) &&
+				!mapBounds.contains(markerLatLng) ){
+				
+				var k = (markerLatLng.lat - mapBoundsCenter.lat) / (markerLatLng.lng - mapBoundsCenter.lng);
+				
+				if(markerLatLng.lng > mapBoundsCenter.lng){
+					x = mapBounds.getEast() - mapBoundsCenter.lng;
+				}else{
+					x = (mapBounds.getWest() - mapBoundsCenter.lng);
+				}
+				if(markerLatLng.lat < mapBoundsCenter.lat){
+					y = mapBounds.getSouth() - mapBoundsCenter.lat;
+				}else{
+					y = mapBounds.getNorth() - mapBoundsCenter.lat;
+				}
+				
+				
+				//To tired to do all the math, so lets make something simple.
+				var lat = (mapBoundsCenter.lat + (k*x));
+				var lng = (mapBoundsCenter.lng + (y/k));
+				
+				var iconAnchor = {x:5,y:5}
+				
+				if(lng > mapBounds.getEast()){
+					lng = mapBounds.getEast();
+					iconAnchor.x = 15;
+				}
+				if(lng < mapBounds.getWest()){
+					lng = mapBounds.getWest()
+					iconAnchor.x = -10;
+				};
+				if(lat < mapBounds.getSouth()){
+					lat = mapBounds.getSouth();
+					iconAnchor.y = 25;
+				}
+				if(lat > mapBounds.getNorth()){
+					lat = mapBounds.getNorth()
+					iconAnchor.y = -5;
+				};
+				
+				if(isNaN(orbat[id].MilSymbol.SIDC)){
+					gameSymbol = orbat[id].MilSymbol.SIDC.charAt(1)
+				}else{
+					gameSymbol = {0:"U",3:"F",4:"N",6:"H"}[orbat[id].MilSymbol.SIDC.charAt(3)]
+				}
+				var gameAwareIcon = L.divIcon({	className: 'test', 
+							html : gameAwareIcons[gameSymbol].textXML, 
+							iconAnchor: new L.Point(iconAnchor.x, iconAnchor.y)});
+							
+				
+				gameAwareLayer.addLayer(L.marker([lat , lng],{icon:gameAwareIcon}))
+				
+				
+			}
+		}
+	}
+	gameAwareLayer.addTo(map)
+}
+
+
+
+</script>
+</head>
+<body onload="init()">
+<div class="page">
+<div class="heading">
+
+<a href="http://spatialillusions.com">SPATIAL ILLUSIONS - Game Aware</a>
+<svg class="logo"
+viewBox="50 50 100 100"
+   width="30"
+   height="30"
+> 
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:3px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       d="m 105,50 25,15 m -40,20 50,10 m -80,-25 0,35 0,25 45,0 15,15 M 110,80 75,70 l 0,50 45,-25 10,35 20,-35 -20,-30 z m -30,65 20,5 20,-5 20,-15 m -50,15 -10,0 -20,-15 m 90,-35 -10,35 -10,0 -10,15 -30,0 m 45,-80 15,30 -10,0 m -10,-35 5,5 -5,0 m -25,-15 25,10 0,5 m -70,5 20,-15 20,5 M 75,70 60,70 50,105 m 10,25 -10,-25 10,0 m 45,25 -15,15 -30,-15 15,-10 m 25,-60 30,5 10,30 M 75,70 100,60 110,80 m 30,15 -10,35 -25,0 m 15,-35 20,0 -30,-15 -20,5 30,10 -15,35 L 75,120 90,85 75,70 60,105 75,120 m 25,-60 5,-10 -25,5 -5,15">
+           <animateTransform 
+        attributeType="xml"
+       attributeName="transform" type="rotate"
+       from="0 100 100" to="360 100 100"
+       begin="0" dur="60s" 
+       fill="freeze"
+       repeatCount="indefinite"
+      />
+      </path>
+  </g>
+
+</svg>
+</div>
+
+<div id="map" class="mymap">
+</div></div>
+<div id="MainSidebar">
+<div class="h2">
+Game Aware</div>
+This is a demo showing the Game Aware functionality. The idea is to show the user 
+information that is outside the screen but that could be of interest for the user. This 
+is done in the same way as it is done in many games by using indicators in the edge of 
+the map shown on the screen. (See the dots shown to the left of this text.)<br>
+The calculation that is done is that we look for units one halv map width/hight in every
+direction. This gives the user situational awareness for a an area that is four (4) times
+as big as the map that they are seeing, but it's so close that the user easily can pan 
+to the area that is shown, just pan from the edge of the map to the center of the map. The 
+position of the indicator is calculated with a vector from the center of the screen, so 
+that we don't need to indicate the direction with the indicator.
+
+</div>
+
+
+
+</body>
+<script>
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-46798131-1', 'spatialillusions.com');
+  ga('send', 'pageview');
+
+</script>  
+</html>

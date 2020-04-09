@@ -56,53 +56,49 @@ function connect() {
 		$("#federationStatusIcon").removeClass("text-danger");
 		$("#federationStatusIcon").addClass("text-warning");
 
-		$.ajax({
-			url:"/federation/start", 
-			type: "GET", 
-			success: function( obj ) {
-				var started = true;
-				if( obj == "STARTED_NOW" ){
-					//
-				} else if( obj == "ALREADY_STARTED" ) {
-					//
-				} else {
-					$("#federationStatusIcon").removeClass("text-warning");
-					$("#federationStatusIcon").addClass("text-danger");
-					fireToast( 'error', 'Federation not started', 'Was not possible to start the federation: ' + obj );
-					started = false;
-				}
-				
-				if( started === true ){
-					$("#federationStatusIcon").removeClass("text-warning");
-					$("#federationStatusIcon").addClass("text-success");
-					$("#federationStatusText").text("Online");
-					getConfig();
-				}
-				
-			},
-		    error: function(xhr, textStatus) {
-				fireToast( 'error', 'Backend Offline', 'The backend application is offline.');
-				$("#federationStatusIcon").removeClass("text-warning");
-				$("#federationStatusIcon").addClass("text-danger");
-				$("#federationStatusText").text("Offline");
-		    }, 		
-	    });
-		
 	}, function( theMessage ) {
 		console.log( "Connect: " + theMessage );
 	});    
     
 }
 
-
-function newAircraft( payload ){
-	console.log( payload);
+function startFederation(){
+	$.ajax({
+		url:"/federation/start", 
+		type: "GET", 
+		success: function( obj ) {
+			var started = true;
+			if( obj == "STARTED_NOW" ){
+				//
+			} else if( obj == "ALREADY_STARTED" ) {
+				//
+			} else {
+				$("#federationStatusIcon").removeClass("text-warning");
+				$("#federationStatusIcon").addClass("text-danger");
+				fireToast( 'error', 'Federation not started', 'Was not possible to start the federation: ' + obj );
+				started = false;
+			}
+			
+			if( started === true ){
+				$("#federationStatusIcon").removeClass("text-warning");
+				$("#federationStatusIcon").addClass("text-success");
+				$("#federationStatusText").text("Online");
+				getConfig();
+			}
+			
+		},
+	    error: function(xhr, textStatus) {
+			fireToast( 'error', 'Backend Offline', 'The backend application is offline.');
+			$("#federationStatusIcon").removeClass("text-warning");
+			$("#federationStatusIcon").addClass("text-danger");
+			$("#federationStatusText").text("Offline");
+	    }, 		
+    });
+	
 }
 
 
-function updateAircrafts( payload ){
-	console.log( payload);
-}
+
 
 function refreshData(){
 	$.ajax({
@@ -448,6 +444,24 @@ function startMap(){
 	    shouldAnimate : true
 	});
 	
+	camera = viewer.camera;
+	scene = viewer.scene;
+	scene.scene3DOnly = true;	
+	
+	scene.highDynamicRange = false;
+	scene.globe.enableLighting = false;
+	scene.globe.baseColor = Cesium.Color.WHITE;
+	scene.screenSpaceCameraController.enableLook = false;
+	scene.screenSpaceCameraController.enableCollisionDetection = false;
+	scene.screenSpaceCameraController.inertiaZoom = 0.8;
+	scene.screenSpaceCameraController.inertiaTranslate = 0.8;
+	scene.globe.maximumScreenSpaceError = 1;
+	scene.globe.depthTestAgainstTerrain = true;
+	scene.globe.tileCacheSize = 250;
+	scene.pickTranslucentDepth = true;
+	scene.useDepthPicking = true;
+
+	
     // MACETES - ESCONDER ELEMENTOS "DESNECESSARIOS"
     jQuery(".cesium-viewer-bottom").hide();
     jQuery(".cesium-viewer-navigationContainer").hide();
@@ -471,7 +485,5 @@ function applyMargins() {
 jQuery(window).on("resize", applyMargins);
 
 connect();
-startMap();
-applyMargins();
 
 

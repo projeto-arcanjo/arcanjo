@@ -106,5 +106,17 @@
 <script src="/resources/script.js"></script>
 <script src="/resources/toast.js"></script>
 <script src="/resources/dashboard.js"></script>
+<script src="/resources/aircrafts.js"></script>
+
+<script>
+	// Inicia o Cesium
+	startMap();
+	// Ajusta o viewport do cesium
+	applyMargins();
+	// pede todas as aeronaves ao backend
+	solicitaAircrafts();
+</script>
+
+
 </html>
 

@@ -5,6 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import br.com.cmabreu.codec.Codec;
+import br.com.cmabreu.codec.EntityIdentifier;
+import br.com.cmabreu.codec.EntityType;
+import br.com.cmabreu.codec.ForceIdentifier;
+import br.com.cmabreu.codec.Marking;
 import br.com.cmabreu.codec.SpatialVariant;
 import br.com.cmabreu.interfaces.IPhysicalEntity;
 import br.com.cmabreu.misc.Environment;
@@ -17,16 +21,38 @@ import hla.rti1516e.RtiFactoryFactory;
 import hla.rti1516e.encoding.EncoderFactory;
 
 public class XPlaneAircraft implements IPhysicalEntity {
-	private double latitude;
-	private double longitude;
-	private double altitude;
+	
+	// Atributos da entidade no RPR-FOM ************
+	private SpatialVariant spatialVariant;
+	private EntityType entityType;
+	private ForceIdentifier forceIdentifier;
+	private EntityIdentifier entityIdentifier;
+	private Marking marking;
+	private byte isConcealed;
+	private byte damageState;	
+	// *********************************************
+	
 	private Logger logger = LoggerFactory.getLogger( XPlaneAircraft.class );
 	private ObjectInstanceHandle objectInstanceHandle;
 	private String objectName;
 	private XPlaneAircraftManager manager;
 	private Codec codec;
-	//private Environment env;
 	private EncoderFactory encoderFactory;
+	private Environment env;
+	
+	
+	private double velocityX;
+	private double velocityY;
+	private double velocityZ;
+	
+	private float orientationPsi;
+	private float orientationTheta;
+	private float orientationPhi;
+	
+	
+	private double latitude;
+	private double longitude;
+	private double altitude;	
 	
 	public XPlaneAircraft( ObjectInstanceHandle theObjectInstance, XPlaneAircraftManager manager, String objectName ) throws Exception {
 		this.encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory(); 
@@ -34,8 +60,8 @@ public class XPlaneAircraft implements IPhysicalEntity {
 		this.objectInstanceHandle = theObjectInstance;
 		this.objectName = objectName;
 		this.manager = manager;
-		//this.env = new Environment();
-		this.codec = new Codec( this.encoderFactory );		
+		this.codec = new Codec( this.encoderFactory );
+		this.env = new Environment();
 	}
 	
 	public String getObjectName() {
@@ -44,30 +70,6 @@ public class XPlaneAircraft implements IPhysicalEntity {
 	
 	public ObjectInstanceHandle getTheObjectInstance() {
 		return this.objectInstanceHandle;
-	}
-
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
-	public double getAltitude() {
-		return altitude;
-	}
-
-	public void setAltitude(double altitude) {
-		this.altitude = altitude;
 	}
 
 	@Override
@@ -82,30 +84,156 @@ public class XPlaneAircraft implements IPhysicalEntity {
 			if( attributeHandle.equals( this.manager.getSpatialHandle() ) ) {
 				processaSpatial( attributeData );
 			}
+			if( attributeHandle.equals( this.manager.getDamageStateHandle() ) ) {
+				processaDamagedState( attributeData );
+			}
+			if( attributeHandle.equals( this.manager.getEntityIdentifierHandle() ) ) {
+				processaEntityIdentifier( attributeData );
+			}
+			if( attributeHandle.equals( this.manager.getEntityTypeHandle() ) ) {
+				processaEntityType( attributeData );
+			}
+			if( attributeHandle.equals( this.manager.getForceIdentifierHandle() ) ) {
+				processaForceIdentifier( attributeData );
+			}
+			if( attributeHandle.equals( this.manager.getMarkingHandle() ) ) {
+				processaMarking( attributeData );
+			}
+			if( attributeHandle.equals( this.manager.getIsConcealedHandle() ) ) {
+				processaIsConcealed( attributeData );
+			}
 			
 			
 		}
 		
+		// Envia este objeto JA ATUALIZADO para a interface WEB
 		simpMessagingTemplate.convertAndSend("/aircrafts/reflectvalues", this ); 
-		
+
+		// Devolve este objeto atualizado para quem chamou. Vai que... 
 		return this;
+	}
+	
+	/**
+	 * 
+	 * 		PROCESSA CADA ATRIBUTO E ATUALIZA ESTE OBJETO
+	 * 
+	 */
+
+	private void processaIsConcealed(byte[] bytes) throws Exception {
+		this.isConcealed = this.codec.decodeIsConcealed(bytes);
+	}
+
+	private void processaMarking(byte[] bytes) throws Exception {
+		this.marking = this.codec.decodeMarking(bytes);
+	}
+
+	private void processaForceIdentifier(byte[] bytes) throws Exception {
+		this.forceIdentifier = this.codec.decodeForceIdentifier(bytes);
+	}
+
+	private void processaEntityType(byte[] bytes) throws Exception {
+		this.entityType = this.codec.decodeEntityType(bytes);
+	}
+
+	private void processaEntityIdentifier(byte[] bytes) throws Exception {
+		this.entityIdentifier = this.codec.decodeEntityIdentifier(bytes);
+	}
+
+	private void processaDamagedState(byte[] bytes) throws Exception {
+		this.damageState = this.codec.decodeDamageState(bytes);
+	}
+
+	private void processaSpatial( byte[] bytes ) throws Exception {
+		this.spatialVariant = this.codec.decodeSpatialVariant( bytes );
+		
+		System.out.println( this.spatialVariant.toString() );
+		
+		double[] geo = this.env.getGeodesicLocation(  this.spatialVariant.getWorldLocation() ); 
+		float[] orientation = this.spatialVariant.getOrientation();
+		
+		this.latitude = geo[ Environment.LAT ];
+		this.longitude = geo[ Environment.LON ];
+		this.altitude = geo[ Environment.ALT ];
+		
+		this.orientationPhi = orientation[ SpatialVariant.PHI ]; 
+		this.orientationTheta = orientation[ SpatialVariant.THETA ]; 
+		this.orientationPsi = orientation[ SpatialVariant.PSI ];
+		
+		
 		
 	}
 
-	// Processa os atributos que chegaram via RTI
-	private void processaSpatial( byte[] bytes ) throws Exception {
-		SpatialVariant sv = this.codec.decodeSpatialVariant( bytes );
-		double[] wl = sv.getWorldLocation();
-		
-		System.out.println("Recebi os dados de posicao (" + this.objectName + "): ");
-		System.out.println(" > LAT " + wl[Environment.LAT] );
-		System.out.println(" > LON " + wl[Environment.LON] );
-		System.out.println(" > ALT " + wl[Environment.ALT] );
-		
-		this.latitude = wl[Environment.LAT];
-		this.longitude = wl[Environment.LON];
-		this.altitude = wl[Environment.ALT];
-		
+	
+	/**
+	 * 		GETTERS 
+	 * 
+	 */
+	
+	
+	public SpatialVariant getSpatialVariant() {
+		return spatialVariant;
 	}
+
+	public EntityType getEntityType() {
+		return entityType;
+	}
+
+	public ForceIdentifier getForceIdentifier() {
+		return forceIdentifier;
+	}
+
+	public EntityIdentifier getEntityIdentifier() {
+		return entityIdentifier;
+	}
+
+	public Marking getMarking() {
+		return marking;
+	}
+
+	public byte getIsConcealed() {
+		return isConcealed;
+	}
+
+	public byte getDamageState() {
+		return damageState;
+	}
+
+	public double getVelocityX() {
+		return velocityX;
+	}
+
+	public double getVelocityY() {
+		return velocityY;
+	}
+
+	public double getVelocityZ() {
+		return velocityZ;
+	}
+
+	public float getOrientationPsi() {
+		return orientationPsi;
+	}
+
+	public float getOrientationTheta() {
+		return orientationTheta;
+	}
+
+	public float getOrientationPhi() {
+		return orientationPhi;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public double getAltitude() {
+		return altitude;
+	}
+	
+	
 
 }

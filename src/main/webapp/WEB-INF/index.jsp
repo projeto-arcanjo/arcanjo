@@ -142,5 +142,11 @@
 <script src="/resources/toast.js"></script>
 <script src="/resources/treemaker.js"></script>
 <script src="/resources/interactiontreemaker.js"></script>
+<script src="/resources/aircrafts.js"></script>
+
+<script>
+	startFederation();
+</script>
+
 </html>
 
