@@ -58,8 +58,6 @@ function getPositionOrientationData( payload ){
 	var theta = orientation[1];
 	var phi = orientation[2];
 
-	console.log( payload );
-	
 	//var ellipsoid = viewer.scene.globe.ellipsoid;
 	var thePosition = Cesium.Cartesian3.fromDegrees( lon, lat, alt );
 	
@@ -67,7 +65,7 @@ function getPositionOrientationData( payload ){
 	var roll = Cesium.Math.toRadians( psi );
 	var heading = Cesium.Math.toRadians( phi );
 
-	var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+	var hpr = new Cesium.HeadingPitchRoll(heading, roll, pitch);
 	var theOrientation = Cesium.Transforms.headingPitchRollQuaternion(thePosition, hpr);
 	result.theOrientation = theOrientation;
 	result.thePosition = thePosition;

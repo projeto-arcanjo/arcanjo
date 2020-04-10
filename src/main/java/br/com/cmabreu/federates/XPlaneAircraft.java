@@ -145,9 +145,7 @@ public class XPlaneAircraft implements IPhysicalEntity {
 
 	private void processaSpatial( byte[] bytes ) throws Exception {
 		this.spatialVariant = this.codec.decodeSpatialVariant( bytes );
-		
-		System.out.println( this.spatialVariant.toString() );
-		
+
 		double[] geo = this.env.getGeodesicLocation(  this.spatialVariant.getWorldLocation() ); 
 		float[] orientation = this.spatialVariant.getOrientation();
 		
@@ -158,8 +156,6 @@ public class XPlaneAircraft implements IPhysicalEntity {
 		this.orientationPhi = orientation[ SpatialVariant.PHI ]; 
 		this.orientationTheta = orientation[ SpatialVariant.THETA ]; 
 		this.orientationPsi = orientation[ SpatialVariant.PSI ];
-		
-		
 		
 	}
 
