@@ -1,4 +1,4 @@
-package br.com.cmabreu.federates;
+package br.com.cmabreu.entities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +10,8 @@ import br.com.cmabreu.codec.EntityType;
 import br.com.cmabreu.codec.ForceIdentifier;
 import br.com.cmabreu.codec.Marking;
 import br.com.cmabreu.codec.SpatialVariant;
-import br.com.cmabreu.interfaces.IPhysicalEntity;
+import br.com.cmabreu.managers.AircraftManager;
 import br.com.cmabreu.misc.Environment;
-import br.com.cmabreu.services.AircraftManager;
 import hla.rti1516e.AttributeHandle;
 import hla.rti1516e.AttributeHandleValueMap;
 import hla.rti1516e.ObjectInstanceHandle;
@@ -20,7 +19,7 @@ import hla.rti1516e.OrderType;
 import hla.rti1516e.RtiFactoryFactory;
 import hla.rti1516e.encoding.EncoderFactory;
 
-public class Aircraft implements IPhysicalEntity {
+public class Aircraft implements IEntity {
 	
 	// Atributos da entidade no RPR-FOM ************
 	private SpatialVariant spatialVariant;

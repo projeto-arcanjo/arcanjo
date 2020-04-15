@@ -13,8 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import br.com.cmabreu.interfaces.IPhysicalEntity;
-import br.com.cmabreu.interfaces.IPhysicalEntityManager;
+import br.com.cmabreu.entities.IEntity;
+import br.com.cmabreu.managers.AircraftManager;
+import br.com.cmabreu.managers.IEntityManager;
 import br.com.cmabreu.misc.EncoderDecoder;
 import br.com.cmabreu.misc.FederateAmbassador;
 import br.com.cmabreu.model.InteractionValue;
@@ -36,7 +37,6 @@ import hla.rti1516e.RTIambassador;
 import hla.rti1516e.RtiFactoryFactory;
 import hla.rti1516e.SynchronizationPointFailureReason;
 import hla.rti1516e.TransportationTypeHandle;
-import hla.rti1516e.exceptions.FederationExecutionAlreadyExists;
 
 @Service
 public class FederateService {
@@ -54,7 +54,7 @@ public class FederateService {
 	private boolean constrained;
 	private boolean advancing;
 	
-	private List<IPhysicalEntityManager> physicalEntities;
+	private List<IEntityManager> physicalEntities;
 	
     @Value("${federation.fomfolder}")
     String fomFolder;	
@@ -96,26 +96,12 @@ public class FederateService {
     	if( !fomFolder.endsWith("/") ) fomFolder = fomFolder + "/";
 		createRtiAmbassador();
 		connect();
-		try {
-			createFederation( federationName );
-			joinFederation( federationName, federateName);
-			subscribeToAll();
-			hlaVersion = rtiamb.getHLAversion();
-			started = true;
-			return "STARTED_NOW";
-		} catch( FederationExecutionAlreadyExists exists ) {
-			this.rtiamb.disconnect();
-			logger.error("*********************************************");
-			logger.error("**        FEDERATE ALREADY EXISTS          **");
-			logger.error("**  Please close all connected federates   **");
-			logger.error("**  and destroy the federation because     **");
-			logger.error("**  this may lead to unexpected behaviour  **");
-			logger.error("*********************************************");
-			logger.error( federationName );
-			logger.error("*********************************************");
-			started = false;
-			return "FEDERATE_ALREADY_EXISTS";
-		}
+		createFederation( federationName );
+		joinFederation( federationName, federateName);
+		subscribeToAll();
+		hlaVersion = rtiamb.getHLAversion();
+		started = true;
+		return "STARTED_NOW";
     }
     
     
@@ -141,7 +127,7 @@ public class FederateService {
 		// Adiciona todo tipo de controladores de entidades em uma lista
 		// dessa forma, quando chegar eventos eu posso descobrir
 		// que tipo de controlador deve processar o evento.
-		this.physicalEntities = new ArrayList<IPhysicalEntityManager>();
+		this.physicalEntities = new ArrayList<IEntityManager>();
 		this.physicalEntities.add( new AircraftManager( rtiamb ) );
     	
 		
@@ -369,7 +355,7 @@ public class FederateService {
 		logger.info("new object (handle " + theObject + ") discovered: " + objectName + " of class " + theObjectClass );
 		
 		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
-		for( IPhysicalEntityManager pe : this.physicalEntities ) {
+		for( IEntityManager pe : this.physicalEntities ) {
 			if( pe.isAKindOfMe( theObjectClass ) ) {
 				pe.discoverObjectInstance( theObject, theObjectClass, objectName, simpMessagingTemplate );
 			}
@@ -399,8 +385,8 @@ public class FederateService {
 		
 		// Procura qual controlador possui a instancia deste objeto e passa o evento pra ele
 		try {
-			for( IPhysicalEntityManager pem : this.physicalEntities ) {
-				IPhysicalEntity pe = pem.doIHaveThisObject(theObject);
+			for( IEntityManager pem : this.physicalEntities ) {
+				IEntity pe = pem.doIHaveThisObject(theObject);
 				if( pe != null ) {
 					pe.reflectAttributeValues( theObject, theAttributes, tag, sentOrder, simpMessagingTemplate);
 				}
@@ -416,8 +402,8 @@ public class FederateService {
 		Integer handle = encoderDecoder.getObjectHandle( theObject );
 		
 		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
-		for( IPhysicalEntityManager pem : this.physicalEntities ) {
-			IPhysicalEntity pe = pem.doIHaveThisObject(theObject);
+		for( IEntityManager pem : this.physicalEntities ) {
+			IEntity pe = pem.doIHaveThisObject(theObject);
 			if( pe != null ) {
 				pem.removeObjectInstance( theObject );
 			}

@@ -1,4 +1,4 @@
-package br.com.cmabreu.services;
+package br.com.cmabreu.managers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,20 +7,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import br.com.cmabreu.federates.Aircraft;
-import br.com.cmabreu.interfaces.IPhysicalEntityManager;
+import br.com.cmabreu.entities.Aircraft;
 import br.com.cmabreu.misc.EncoderDecoder;
 import hla.rti1516e.AttributeHandle;
 import hla.rti1516e.AttributeHandleSet;
-import hla.rti1516e.InteractionClassHandle;
 import hla.rti1516e.ObjectClassHandle;
 import hla.rti1516e.ObjectInstanceHandle;
 import hla.rti1516e.RTIambassador;
 
-public class AircraftManager implements IPhysicalEntityManager 	{
+public class AircraftManager implements IEntityManager 	{
 	private RTIambassador rtiAmb;
 	
-	private InteractionClassHandle interactionHandle; 
 	protected AttributeHandleSet attributes;
 	protected ObjectClassHandle entityHandle;
 	protected AttributeHandle entityTypeHandle;
@@ -113,9 +110,6 @@ public class AircraftManager implements IPhysicalEntityManager 	{
         
         this.rtiAmb.subscribeObjectClassAttributes( this.entityHandle, attributes );   
         
-        this.interactionHandle = this.rtiAmb.getInteractionClassHandle("Acknowledge");
-        this.rtiAmb.subscribeInteractionClass(interactionHandle);
-        
 	}
 
 	/* GETTERS e SETTERS */
@@ -130,10 +124,6 @@ public class AircraftManager implements IPhysicalEntityManager 	{
 
 	public List<Aircraft> getAircrafts() {
 		return aircrafts;
-	}
-
-	public InteractionClassHandle getInteractionHandle() {
-		return interactionHandle;
 	}
 
 	public ObjectClassHandle getEntityHandle() {

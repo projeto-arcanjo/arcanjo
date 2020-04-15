@@ -72,12 +72,16 @@ function getPositionOrientationData( payload ){
 	return result;
 }
 
+// Funcao centralizadora.
+// Decidir como vai criar tipos de simulacao diferentes.
 function criaAircraft( payload ){
+	return criaAircraftContrutiva( payload );	
+	//return criaAircraftSimulada( payload );	
+}
+
+function criaAircraftSimulada( payload ){
 	// Cria o objeto na interface
 	// e posiciona ele no mapa
-	
-	return criaAircraftContrutiva( payload );
-	
 	
 	var po = getPositionOrientationData( payload );
 	
