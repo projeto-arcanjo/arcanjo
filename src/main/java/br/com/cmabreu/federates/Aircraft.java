@@ -20,7 +20,7 @@ import hla.rti1516e.OrderType;
 import hla.rti1516e.RtiFactoryFactory;
 import hla.rti1516e.encoding.EncoderFactory;
 
-public class XPlaneAircraft implements IPhysicalEntity {
+public class Aircraft implements IPhysicalEntity {
 	
 	// Atributos da entidade no RPR-FOM ************
 	private SpatialVariant spatialVariant;
@@ -32,7 +32,7 @@ public class XPlaneAircraft implements IPhysicalEntity {
 	private byte damageState;	
 	// *********************************************
 	
-	private Logger logger = LoggerFactory.getLogger( XPlaneAircraft.class );
+	private Logger logger = LoggerFactory.getLogger( Aircraft.class );
 	private ObjectInstanceHandle objectInstanceHandle;
 	private String objectName;
 	private XPlaneAircraftManager manager;
@@ -54,7 +54,7 @@ public class XPlaneAircraft implements IPhysicalEntity {
 	private double longitude;
 	private double altitude;	
 	
-	public XPlaneAircraft( ObjectInstanceHandle theObjectInstance, XPlaneAircraftManager manager, String objectName ) throws Exception {
+	public Aircraft( ObjectInstanceHandle theObjectInstance, XPlaneAircraftManager manager, String objectName ) throws Exception {
 		this.encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory(); 
 		logger.info("Nova aeronave vinda do X-Plane");
 		this.objectInstanceHandle = theObjectInstance;
@@ -73,7 +73,7 @@ public class XPlaneAircraft implements IPhysicalEntity {
 	}
 
 	@Override
-	public XPlaneAircraft reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, 
+	public Aircraft reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, 
 			byte[] tag, OrderType sentOrder, SimpMessagingTemplate simpMessagingTemplate) throws Exception {
 		 
 		for (AttributeHandle attributeHandle : theAttributes.keySet() ) {

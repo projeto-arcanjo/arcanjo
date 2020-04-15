@@ -11,120 +11,79 @@
 	cursor: move;
 }
 </style>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="skin-blue layout-top-nav">
 	<div class="wrapper">
 
 		<header class="main-header">
 			<nav class="navbar navbar-static-top" role="navigation">
-				<jsp:include page="pagelogo.jsp" />
+				<div class="container-fluid">
 
-				<a href="#" class="sidebar-toggle" data-toggle="push-menu"
-					role="button"> <span class="sr-only">Toggle navigation</span> <span
-					class="icon-bar"></span> <span class="icon-bar"></span> <span
-					class="icon-bar"></span>
-				</a>
-
-				<div class="navbar-custom-menu">
-					<ul class="nav navbar-nav">
-						<!-- NOTIFICATIONS -->
-						<jsp:include page="notifications.jsp" />
-						<!-- USER DROP DOWN -->
-						<jsp:include page="userdropdown.jsp" />
-					</ul>
+					<div class="navbar-header">
+						<img src="/resources/img/logo-md-2.png"
+							style="height: 45px; float: left; margin-top: 3px;"> <img
+							src="/resources/img/logo-md-1.png"
+							style="height: 43px; float: left; margin-right: 15px; margin-top: 7px;">
+						<a style="font-size: 25px;" href="#" class="navbar-brand"><b>Arcanjo</b>|RTI</a>
+					</div>
+					
+					
+					<!--  BARRA DE BOTÕES DE FERRAMENTAS -->
+					<div id="toolBarsContainer"	style="float:left;width: auto;margin-top: 7px;margin-left: 25px;">
+						<div id="toolBarStandard" class="btn-group"
+							style="float: left; opacity: 0.6;">
+							
+							<button title="Virtual" id="toolGuia" type="button" class="btn btn-primary btn-flat"> 
+								<i class="fa fa-fighter-jet"></i>
+							</button>
+							
+							<button title="Construtiva" id="toolEdgvBook" style="margin-left:10px;"
+								type="button" class="btn btn-primary btn-flat">
+								<i class="fa fa-flag-checkered"></i>
+							</button>
+							
+						</div>
+											
+					</div>
+					
+					
 				</div>
+					
 			</nav>
 		</header>
 
-		<jsp:include page="mainsidebar.jsp" />
-
 		<div class="content-wrapper">
-
-			<section class="content container-fluid">
-			
-				 
-				<div class="row">
-		              <div class="col-md-12 col-sm-12 col-xs-12">
-			              <a class="btn btn-flat">
-			                <i class="fa fa-play"></i>
-			              </a>		              
-			              <a class="btn btn-flat">
-			                <i class="fa fa-stop"></i> 
-			              </a>		              
-			              <a onclick="refreshData();" href="#" class="btn btn-flat">
-			                <i class="fa fa-repeat"></i>
-			              </a>		              
-		              </div>
-				</div>
- 				
- 				
-				<div class="row">
-					<!--  https://ionicons.com/v2/cheatsheet.html  -->
-
-
-					<div class="col-md-3 col-sm-12 col-xs-12">
-						<div class="small-box bg-light-blue">
-							<div class="inner">
-								<h3 id="totalModules">0</h3>
-								<p>Modules</p>
-							</div>
-							<div class="icon">
-								<i class="ion ion-cube"></i>
-							</div>
-							<a onclick="showModules();" href="#" class="small-box-footer">More <i class="fa fa-arrow-circle-right"></i></a>
-						</div>
-					</div>
-					
-					<div class="col-md-3 col-sm-12 col-xs-12">
-						<div class="small-box bg-light-blue">
-							<div class="inner">
-								<h3 id="totalClasses">0</h3>
-								<p>Classes</p>
-							</div>
-							<div class="icon">
-								<i class="ion ion-ios-box"></i>
-							</div>
-							<a onclick="showClasses();" href="#" class="small-box-footer">More <i class="fa fa-arrow-circle-right"></i></a>
-						</div>
-					</div>
-
-					<div class="col-md-3 col-sm-12 col-xs-12">
-						<div class="small-box bg-light-blue">
-							<div class="inner">
-								<h3 id="totalObjects">0</h3>
-								<p>Instances</p>
-							</div>
-							<div class="icon">
-								<i class="ion ion-android-car"></i>
-							</div>
-							<a onclick="showInstances();" href="#"	class="small-box-footer">More <i class="fa fa-arrow-circle-right"></i></a>
-						</div>
-					</div>
-
-					<div class="col-md-3 col-sm-12 col-xs-12">
-						<div class="small-box bg-light-blue">
-							<div class="inner">
-								<h3 id="totalInteractions">0</h3>
-								<p>Interactions</p>
-							</div>
-							<div class="icon">
-								<i class="ion ion-arrow-graph-up-right"></i>
-							</div>
-							<a onclick="showInteractions();" href="#" class="small-box-footer">More <i class="fa fa-arrow-circle-right"></i></a>
-						</div>
-					</div>
-
-
-
-				</div>
-				
-				<div id="mainContentData" class="row"></div>
-
-				<div id="mainContentDataLine2" class="row"></div>
-				
-			</section>
+			<div style="width:100%; height:100%" id="cesiumContainer">
 			
 			
+						<div id="bottonBar"
+							style="width: 100%; position: absolute; z-index: 9999; font-family: Consolas; font-size: 11px; bottom: 55px; height: 15px; color: black;">
+
+							<div class="layerCounter" id="layerLoadingPanelGau" style="width: 150px; display:none;float: left; margin-left: 20px;margin-right:5px;padding-top:3px">
+								<div class='progress progress-sm active'>
+									<div class='progress-bar progress-bar-red progress-bar-striped' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width: 100%'></div>
+								</div>
+							</div>
+							<div class="layerCounter" id="layerLoadingPanelCnt" style="width: 50px; float: left;display:none">
+								<div id="lyrCount" style="width: 50px; float: left">0</div>
+							</div>
+
+
+							<div id="latLonPanel"
+								style="width: 210px; float: right; margin-right: 20px;">
+								<div id="mapLat"
+									style="width: 100px; text-align: right; float: left"></div>
+								<div id="mapLon"
+									style="width: 100px; text-align: right; float: left"></div>
+							</div>
+							
+						</div>			
+			
+			
+			
+			
+			</div>
 		</div>
+
 		<jsp:include page="footer.jsp" />
 
 	</div>
@@ -132,21 +91,30 @@
 </body>
 
 
+<script src="/resources/Cesium/Cesium.js" type="text/javascript"></script>
 <script src="/resources/sockjs.min.js" type="text/javascript"></script>
 <script src="/resources/stomp.min.js" type="text/javascript"></script>
-<script src="/resources/script.js"></script>
-<script src="/resources/modulemanager.js"></script>
-<script src="/resources/interactionmanager.js"></script>
-<script src="/resources/classmanager.js"></script>
-<script src="/resources/instancemanager.js"></script>
-<script src="/resources/toast.js"></script>
-<script src="/resources/treemaker.js"></script>
-<script src="/resources/interactiontreemaker.js"></script>
-<script src="/resources/aircrafts.js"></script>
+<script src="/resources/convertions.js" type="text/javascript"></script>
+<script src="/resources/globe.js" type="text/javascript"></script>
+<script src="/resources/toast.js" type="text/javascript"></script>
+<script src="/resources/aircrafts.js" type="text/javascript"></script>
 
 <script>
-	startFederation();
+$( document ).ready(function() {
+
+	// Conecta o WebSockets
+	connect();
+	// Inicia o Cesium
+	startMap();
+	// Ajusta o viewport do cesium
+	applyMargins();
+
+	// Leva o mapa para a area inicial
+	goToOperationArea( homeLocation );
+	   
+});
 </script>
+
 
 </html>
 

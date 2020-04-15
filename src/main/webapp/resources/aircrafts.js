@@ -103,3 +103,17 @@ function criaAircraft( payload ){
 
 	return airPlane;
 }
+
+
+function criaAircraftContrutiva( payload ){
+	var svgUrl = "http://192.168.0.101:36002/SFG-UCI---.png";
+	var po = getPositionOrientationData( payload );
+	
+	viewer.entities.add({
+		position: po.thePosition,
+		billboard: {
+			image: svgUrl
+		}
+	});	
+	
+}

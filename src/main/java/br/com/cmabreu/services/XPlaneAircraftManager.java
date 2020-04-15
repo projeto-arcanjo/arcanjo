@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import br.com.cmabreu.federates.XPlaneAircraft;
+import br.com.cmabreu.federates.Aircraft;
 import br.com.cmabreu.interfaces.IPhysicalEntityManager;
 import br.com.cmabreu.misc.EncoderDecoder;
 import hla.rti1516e.AttributeHandle;
@@ -31,7 +31,7 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 	protected AttributeHandle entityIdentifierHandle;
 	protected AttributeHandle damageStateHandle;
 	
-	private List<XPlaneAircraft> aircrafts;
+	private List<Aircraft> aircrafts;
 	private EncoderDecoder decoder;
 	private Logger logger = LoggerFactory.getLogger( XPlaneAircraftManager.class );
 
@@ -51,7 +51,7 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 		int handle = decoder.getObjectHandle( theObject );
 		System.out.println("Nova aeronave '" + objectName + "' descoberta: Handle " + handle );
 		try {
-			XPlaneAircraft xpac = new XPlaneAircraft( theObject, this, objectName );
+			Aircraft xpac = new Aircraft( theObject, this, objectName );
 			aircrafts.add( xpac );
 			simpMessagingTemplate.convertAndSend("/aircrafts/discovered", xpac ); 
 		} catch ( Exception e ) {
@@ -61,9 +61,9 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 	
 	// Verifica se este controlador possui algum objeto instanciado com este handle
 	@Override
-	public XPlaneAircraft doIHaveThisObject( ObjectInstanceHandle theObject ) {
+	public Aircraft doIHaveThisObject( ObjectInstanceHandle theObject ) {
 		int other = decoder.getObjectHandle( theObject );
-		for( XPlaneAircraft ac : this.aircrafts ) {
+		for( Aircraft ac : this.aircrafts ) {
 			if( other == decoder.getObjectHandle( ac.getTheObjectInstance() ) ) return ac;
 		}
 		return null;
@@ -72,7 +72,7 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 	@Override
 	public void removeObjectInstance(ObjectInstanceHandle theObject){
 		int other = decoder.getObjectHandle( theObject );
-		for( XPlaneAircraft ac : this.aircrafts ) {
+		for( Aircraft ac : this.aircrafts ) {
 			if( other == decoder.getObjectHandle( ac.getTheObjectInstance() ) ) {
 				logger.error("Preciso remover a aeronave '" + ac.getObjectName() + "' mas nao sei como. Ela continua comigo!");
 				// REMOVE DA LISTA
@@ -86,7 +86,7 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 	public XPlaneAircraftManager( RTIambassador rtiAmb) throws Exception {
 		logger.info("X-Plane Aircraft Manager ativo");
 		this.decoder = new EncoderDecoder();
-		this.aircrafts = new ArrayList<XPlaneAircraft>();
+		this.aircrafts = new ArrayList<Aircraft>();
 		this.rtiAmb = rtiAmb;
 		this.entityHandle = rtiAmb.getObjectClassHandle("BaseEntity.PhysicalEntity.Platform.Aircraft");
 		this.subscribe();
@@ -128,7 +128,7 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 		this.rtiAmb = rtiAmb;
 	}
 
-	public List<XPlaneAircraft> getAircrafts() {
+	public List<Aircraft> getAircrafts() {
 		return aircrafts;
 	}
 
