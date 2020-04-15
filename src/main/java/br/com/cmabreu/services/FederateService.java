@@ -142,7 +142,7 @@ public class FederateService {
 		// dessa forma, quando chegar eventos eu posso descobrir
 		// que tipo de controlador deve processar o evento.
 		this.physicalEntities = new ArrayList<IPhysicalEntityManager>();
-		this.physicalEntities.add( new XPlaneAircraftManager( rtiamb ) );
+		this.physicalEntities.add( new AircraftManager( rtiamb ) );
     	
 		
     }

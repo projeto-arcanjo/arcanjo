@@ -17,7 +17,7 @@ import hla.rti1516e.ObjectClassHandle;
 import hla.rti1516e.ObjectInstanceHandle;
 import hla.rti1516e.RTIambassador;
 
-public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
+public class AircraftManager implements IPhysicalEntityManager 	{
 	private RTIambassador rtiAmb;
 	
 	private InteractionClassHandle interactionHandle; 
@@ -33,7 +33,7 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 	
 	private List<Aircraft> aircrafts;
 	private EncoderDecoder decoder;
-	private Logger logger = LoggerFactory.getLogger( XPlaneAircraftManager.class );
+	private Logger logger = LoggerFactory.getLogger( AircraftManager.class );
 
 	/** **************************************************************************************************************  
 	* 
@@ -48,12 +48,12 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 	
 	@Override
 	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName, SimpMessagingTemplate simpMessagingTemplate ) {
-		int handle = decoder.getObjectHandle( theObject );
-		System.out.println("Nova aeronave '" + objectName + "' descoberta: Handle " + handle );
+		//int handle = decoder.getObjectHandle( theObject );
+		System.out.println("Nova aeronave '" + objectName + "' descoberta");
 		try {
 			Aircraft xpac = new Aircraft( theObject, this, objectName );
 			aircrafts.add( xpac );
-			simpMessagingTemplate.convertAndSend("/aircrafts/discovered", xpac ); 
+			simpMessagingTemplate.convertAndSend("/platform/aircraft/discovered", xpac ); 
 		} catch ( Exception e ) {
 			logger.error("Erro ao criar aeronave: " + e.getMessage() );
 		}
@@ -83,8 +83,8 @@ public class XPlaneAircraftManager implements IPhysicalEntityManager 	{
 	/** **************************************************************************************************************  */
 	
 	
-	public XPlaneAircraftManager( RTIambassador rtiAmb) throws Exception {
-		logger.info("X-Plane Aircraft Manager ativo");
+	public AircraftManager( RTIambassador rtiAmb) throws Exception {
+		logger.info("Aircraft Manager ativo");
 		this.decoder = new EncoderDecoder();
 		this.aircrafts = new ArrayList<Aircraft>();
 		this.rtiAmb = rtiAmb;

@@ -12,7 +12,7 @@ import br.com.cmabreu.codec.Marking;
 import br.com.cmabreu.codec.SpatialVariant;
 import br.com.cmabreu.interfaces.IPhysicalEntity;
 import br.com.cmabreu.misc.Environment;
-import br.com.cmabreu.services.XPlaneAircraftManager;
+import br.com.cmabreu.services.AircraftManager;
 import hla.rti1516e.AttributeHandle;
 import hla.rti1516e.AttributeHandleValueMap;
 import hla.rti1516e.ObjectInstanceHandle;
@@ -35,7 +35,7 @@ public class Aircraft implements IPhysicalEntity {
 	private Logger logger = LoggerFactory.getLogger( Aircraft.class );
 	private ObjectInstanceHandle objectInstanceHandle;
 	private String objectName;
-	private XPlaneAircraftManager manager;
+	private AircraftManager manager;
 	private Codec codec;
 	private EncoderFactory encoderFactory;
 	private Environment env;
@@ -54,9 +54,9 @@ public class Aircraft implements IPhysicalEntity {
 	private double longitude;
 	private double altitude;	
 	
-	public Aircraft( ObjectInstanceHandle theObjectInstance, XPlaneAircraftManager manager, String objectName ) throws Exception {
+	public Aircraft( ObjectInstanceHandle theObjectInstance, AircraftManager manager, String objectName ) throws Exception {
 		this.encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory(); 
-		logger.info("Nova aeronave vinda do X-Plane");
+		logger.info("Nova aeronave criada: " + objectName );
 		this.objectInstanceHandle = theObjectInstance;
 		this.objectName = objectName;
 		this.manager = manager;
@@ -107,7 +107,7 @@ public class Aircraft implements IPhysicalEntity {
 		}
 		
 		// Envia este objeto JA ATUALIZADO para a interface WEB
-		simpMessagingTemplate.convertAndSend("/aircrafts/reflectvalues", this ); 
+		simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", this ); 
 
 		// Devolve este objeto atualizado para quem chamou. Vai que... 
 		return this;

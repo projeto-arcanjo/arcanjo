@@ -17,12 +17,12 @@ function connect() {
 	
 	stompClient.connect({}, function(frame) {
 		
-		stompClient.subscribe('/aircrafts/reflectvalues', function(notification) {
+		stompClient.subscribe('/platform/aircraft/reflectvalues', function(notification) {
 			var payload =  JSON.parse( notification.body );
 			updateAircrafts( payload );
 		});
 		
-		stompClient.subscribe('/aircrafts/discovered', function(notification) {
+		stompClient.subscribe('/platform/aircraft/discovered', function(notification) {
 			var payload =  JSON.parse( notification.body );
 			newAircraft( payload );
 		});
@@ -196,32 +196,7 @@ function loadTest(){
 				eyeOffset: new Cesium.Cartesian3(0.0, 130.0, 0.0)
 			};
 			
-			
-			/*
-			
-			var unity = new Cesium.Entity({
-				name : feature.properties.name,
-				position: Cesium.Cartesian3.fromDegrees( lon, lat, 0 ),
-				billboard: {
-					image: svgUrl,
-		            eyeOffset: new Cesium.Cartesian3(0.0, 0.0, 0.0),
-		            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-		            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-		            scaleByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 8.5e7, 0.3),
-		            heightReference : Cesium.HeightReference.CLAMP_TO_GROUND, // Construtiva senta no chao
-				},
-				label: {
-					text: feature.properties.name,
-					style: Cesium.LabelStyle.FILL,
-					fillColor: Cesium.Color.BLACK,
-					//outlineWidth: 1,
-					font: '10px Consolas',
-					eyeOffset: new Cesium.Cartesian3(0.0, 130.0, 0.0)
-				}
-				
-			});	
-			*/
-			
+		
 		}
     	
 		viewer.dataSources.add(jsondata);
