@@ -76,6 +76,9 @@ function criaAircraft( payload ){
 	// Cria o objeto na interface
 	// e posiciona ele no mapa
 	
+	return criaAircraftContrutiva( payload );
+	
+	
 	var po = getPositionOrientationData( payload );
 	
 	var airPlane = new Cesium.Entity({
@@ -96,7 +99,7 @@ function criaAircraft( payload ){
 			fillColor: Cesium.Color.BLACK,
 			outlineWidth: 1,
 			font: '10px Consolas',
-			eyeOffset: new Cesium.Cartesian3(0.0, 170.0, 0.0)
+			eyeOffset: new Cesium.Cartesian3(0.0, 130.0, 0.0)
 		}
 	});
 	viewer.entities.add( airPlane );
@@ -106,14 +109,33 @@ function criaAircraft( payload ){
 
 
 function criaAircraftContrutiva( payload ){
-	var svgUrl = "http://192.168.0.101:36002/SFG-UCI---.png";
+	// https://spatialillusions.com/milsymbol/documentation.html
+	
+	var orientation = payload.spatialVariant.orientation;
+	var phi = orientation[2];	
+	var alt = payload.altitude;
+	
+	payload.altitude = 0; // Construtiva senta no chao!
+	
+	//var svgUrl = "http://192.168.0.101:36002/SFAPC-------.png?size=30&direction=" + phi + "&altitudeDepth=" + alt ;
+	var svgUrl = "http://192.168.0.101:36002/SFGPUCIZ--AH***.png?size=30";
 	var po = getPositionOrientationData( payload );
 	
-	viewer.entities.add({
+	var airPlane = new Cesium.Entity({
+		name : payload.objectName,
 		position: po.thePosition,
 		billboard: {
-			image: svgUrl
+			image: svgUrl,
+            eyeOffset: new Cesium.Cartesian3(0.0, 0.0, 0.0),
+            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            scaleByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 8.5e7, 0.3),
+            heightReference : Cesium.HeightReference.CLAMP_TO_GROUND, // Construtiva senta no chao
+            //translucencyByDistance : new Cesium.NearFarScalar(1.5e2, 2.0, 1.5e7, 0.5),
 		}
 	});	
+	
+	viewer.entities.add( airPlane );
+	return airPlane;
 	
 }

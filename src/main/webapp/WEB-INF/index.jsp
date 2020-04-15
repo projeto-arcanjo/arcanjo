@@ -45,8 +45,17 @@
 											
 					</div>
 					
+					<div class="navbar-custom-menu">
+						<ul class="nav navbar-nav">
+							<!-- NOTIFICATIONS -->
+							<jsp:include page="notifications.jsp" />
+							<!-- USER DROP DOWN -->
+							<jsp:include page="userdropdown.jsp" />
+						</ul>
+					</div>					
 					
 				</div>
+					
 					
 			</nav>
 		</header>
@@ -111,7 +120,10 @@ $( document ).ready(function() {
 
 	// Leva o mapa para a area inicial
 	goToOperationArea( homeLocation );
-	   
+
+
+	// Carrega um teste com dummies
+	loadTest();   
 });
 </script>
 

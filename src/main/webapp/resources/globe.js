@@ -77,6 +77,7 @@ function startMap(){
 	scene.pickTranslucentDepth = true;
 	scene.useDepthPicking = true;
 
+	mainEventHandler = new Cesium.ScreenSpaceEventHandler( scene.canvas );
 	
     // MACETES - ESCONDER ELEMENTOS "DESNECESSARIOS"
     jQuery(".cesium-viewer-bottom").hide();
@@ -133,10 +134,12 @@ function goToOperationArea( operationArea ) {
 
 function addMouseHoverListener() {
 	mainEventHandler.setInputAction( function(movement) {
-		var position = getMapMousePosition( movement );
+		var ray = viewer.camera.getPickRay(movement.endPosition);
+		var position = viewer.scene.globe.pick(ray, viewer.scene);
 		if ( position ) updatePanelFooter( position );
 	}, Cesium.ScreenSpaceEventType.MOUSE_MOVE );
 };
+
 
 function updatePanelFooter( position ) {
 	cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(position);
@@ -163,5 +166,81 @@ function updatePanelFooter( position ) {
 }
 
 
+function loadTest(){
+  	var jsondata = new Cesium.GeoJsonDataSource();
+  	
+  	var units = jsondata.load('/resources/test/senario.json', {clampToGround:true}).then(function(jsondata) {
+    	var unitarray = jsondata.entities.values;
+    	var lastOne = null;
+    	
+    	for (var i = 0; i < unitarray.length; i++) {
+			var feature = unitarray[i];
+			var svgUrl = "http://192.168.0.101:36002/" + feature.properties.SIDC + ".png?size=30";
+
+			console.log( feature );
+			var thePosition = feature.position;
+			console.log( thePosition );
+			var cartographic = Cesium.Cartographic.fromCartesian( thePosition );
+			console.log( cartographic );
+			
+			/*
+			var longitude = Cesium.Math.toDegrees(cartographic.longitude);
+			var latitude = Cesium.Math.toDegrees(cartographic.latitude);
+			console.log( latitude + ", " + longitude );
+			*/
+			
+			//var newPosition = Cesium.Cartesian3.fromDegrees(longitude, latitude, 0);				
+			//feature.position = newPosition;
+			
+			feature.billboard = {
+				image: svgUrl,
+	            eyeOffset: new Cesium.Cartesian3(0.0, 0.0, 0.0),
+	            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+	            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+	            scaleByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 8.5e7, 0.3),
+	            heightReference : Cesium.HeightReference.CLAMP_TO_GROUND, // Construtiva senta no chao
+			}			
+			
+			
+			/*
+			
+			var unity = new Cesium.Entity({
+				name : feature.properties.name,
+				position: Cesium.Cartesian3.fromDegrees( lon, lat, 0 ),
+				billboard: {
+					image: svgUrl,
+		            eyeOffset: new Cesium.Cartesian3(0.0, 0.0, 0.0),
+		            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+		            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+		            scaleByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 8.5e7, 0.3),
+		            heightReference : Cesium.HeightReference.CLAMP_TO_GROUND, // Construtiva senta no chao
+				},
+				label: {
+					text: feature.properties.name,
+					style: Cesium.LabelStyle.FILL,
+					fillColor: Cesium.Color.BLACK,
+					//outlineWidth: 1,
+					font: '10px Consolas',
+					eyeOffset: new Cesium.Cartesian3(0.0, 130.0, 0.0)
+				}
+				
+			});	
+			*/
+			
+		}
+    	
+		viewer.dataSources.add(jsondata);
+    	viewer.zoomTo(jsondata);
+    	
+    }).otherwise(function(error){
+    	console.log( error.message );
+	});		
+}
+
+
 jQuery(window).on("resize", applyMargins);
+
+
+
+
 
