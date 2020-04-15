@@ -118,7 +118,10 @@ function criaAircraftContrutiva( payload ){
 	payload.altitude = 0; // Construtiva senta no chao!
 	
 	//var svgUrl = "http://192.168.0.101:36002/SFAPC-------.png?size=30&direction=" + phi + "&altitudeDepth=" + alt ;
-	var svgUrl = "http://192.168.0.101:36002/SFGPUCIZ--AH***.png?size=30";
+	var svgUrl = "http://192.168.0.101:36002/SHAPMF------.png?size=30";
+	
+	console.log( phi );
+	
 	var po = getPositionOrientationData( payload );
 	
 	var airPlane = new Cesium.Entity({
@@ -130,6 +133,7 @@ function criaAircraftContrutiva( payload ){
             horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
             scaleByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 8.5e7, 0.3),
+            disableDepthTestDistance : Number.POSITIVE_INFINITY, 
             heightReference : Cesium.HeightReference.CLAMP_TO_GROUND, // Construtiva senta no chao
             //translucencyByDistance : new Cesium.NearFarScalar(1.5e2, 2.0, 1.5e7, 0.5),
 		}

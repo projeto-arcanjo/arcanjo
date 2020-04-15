@@ -177,29 +177,24 @@ function loadTest(){
 			var feature = unitarray[i];
 			var svgUrl = "http://192.168.0.101:36002/" + feature.properties.SIDC + ".png?size=30";
 
-			console.log( feature );
-			var thePosition = feature.position;
-			console.log( thePosition );
-			var cartographic = Cesium.Cartographic.fromCartesian( thePosition );
-			console.log( cartographic );
-			
-			/*
-			var longitude = Cesium.Math.toDegrees(cartographic.longitude);
-			var latitude = Cesium.Math.toDegrees(cartographic.latitude);
-			console.log( latitude + ", " + longitude );
-			*/
-			
-			//var newPosition = Cesium.Cartesian3.fromDegrees(longitude, latitude, 0);				
-			//feature.position = newPosition;
-			
 			feature.billboard = {
 				image: svgUrl,
 	            eyeOffset: new Cesium.Cartesian3(0.0, 0.0, 0.0),
 	            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
 	            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
 	            scaleByDistance : new Cesium.NearFarScalar(1.5e2, 1.0, 8.5e7, 0.3),
+	            disableDepthTestDistance : Number.POSITIVE_INFINITY, 
 	            heightReference : Cesium.HeightReference.CLAMP_TO_GROUND, // Construtiva senta no chao
-			}			
+			};
+			
+			
+			feature.label = {
+				text: feature.properties.name,
+				style: Cesium.LabelStyle.FILL,
+				fillColor: Cesium.Color.BLACK,
+				font: '10px Consolas',
+				eyeOffset: new Cesium.Cartesian3(0.0, 130.0, 0.0)
+			};
 			
 			
 			/*
