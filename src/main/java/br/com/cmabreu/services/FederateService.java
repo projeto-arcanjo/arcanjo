@@ -98,6 +98,10 @@ public class FederateService {
 		connect();
 		createFederation( federationName );
 		joinFederation( federationName, federateName);
+		
+		// Armazena todas as classes encontradas nos modulos
+		parseModules();
+		
 		subscribeToAll();
 		hlaVersion = rtiamb.getHLAversion();
 		started = true;
@@ -110,20 +114,19 @@ public class FederateService {
      * @throws Exception
      */
     private void parseModules() throws Exception {
-    	logger.info("Parsing modules");
+    	logger.info("Verificando Modulos");
     	moduleProcessorService.parseModules( this.modules );
-    	logger.info("Acquiring class handles");
+    	logger.info("Carregando Classes dos Modulos");
     	for( ObjectClass objectClass : moduleProcessorService.getObjectList().getList() ) {
     		ObjectClassHandle objectClassHandle = this.rtiamb.getObjectClassHandle( objectClass.getMyName() );
     		objectClass.setHandle( encoderDecoder.getObjectClassHandle( objectClassHandle ) );
-    		logger.info("  > [" +  objectClass.getHandle() + "] " + objectClass.getMyName() );
+    		
+    		//logger.info("  > [" +  objectClass.getHandle() + "] " + objectClass.getMyName() );
     	}
+    	logger.info("Classes carregadas.");
     }
     
     private void subscribeToAll() throws Exception {
-    	parseModules();
-
-    	
 		// Adiciona todo tipo de controladores de entidades em uma lista
 		// dessa forma, quando chegar eventos eu posso descobrir
 		// que tipo de controlador deve processar o evento.
@@ -206,9 +209,6 @@ public class FederateService {
     public Module getModule( String moduleFileName ) {
     	for( Module module : this.modules ) {
     		String sf = module.getFileName().replace(".","");
-    		
-    		System.out.println(sf.toLowerCase() + " = " + moduleFileName.toLowerCase() );
-    		
     		if( sf.toLowerCase().equals( moduleFileName.toLowerCase() ) ) {
     			module.getClasses().addAll( getClasses( moduleFileName ) );
     			return module;
@@ -222,24 +222,40 @@ public class FederateService {
     public List<ObjectClass> getClasses() {
     	return moduleProcessorService.getObjectList().getList();
     }
+    
+    
     private List<ObjectClass> getClasses( String moduleFileName ) {
     	List<ObjectClass> result = new ArrayList<ObjectClass>();
 		for( ObjectClass objectClass : moduleProcessorService.getObjectList().getList() ) {
-			if( objectClass.getModuleName().replace(".","").toLowerCase().equals( moduleFileName.toLowerCase() ) ){
+			if( objectClass.getModuleName().replaceAll("\\.","").toLowerCase().equals( moduleFileName.toLowerCase() ) ){
 				result.add( objectClass );
 			}
 		}
     	return result;
-    	
     }
+    
+    
+	public List<ObjectClass> getClassByParentName(String parentName) {
+    	List<ObjectClass> result = new ArrayList<ObjectClass>();
+		for( ObjectClass objectClass : moduleProcessorService.getObjectList().getList() ) {
+			if( objectClass.getMyParentName().replaceAll("\\.","").toLowerCase().equals( parentName.toLowerCase() ) ){
+				result.add( objectClass );
+			}
+		}
+    	return result;
+	}
+	
+	
     public ObjectClass getClass( String className ) {
 		for( ObjectClass objectClass : moduleProcessorService.getObjectList().getList() ) {
-			if( objectClass.getMyName().toLowerCase().equals( className.toLowerCase() ) ) {
+			if( objectClass.getMyName().replaceAll("\\.","").toLowerCase().equals( className.toLowerCase() ) ) {
 				return objectClass;
 			}
 		}
 		return null;
     }
+    
+    
     public ObjectClass getClass( Integer classHandle ) {
 		for( ObjectClass objectClass : moduleProcessorService.getObjectList().getList() ) {
 			if( objectClass.getHandle().equals( classHandle ) ) {
@@ -261,7 +277,7 @@ public class FederateService {
     }
     public ObjectInstance getInstance( String objectName ) {
 		for( ObjectInstance instance : instances  ) {
-			if( instance.getObjectName().toLowerCase().equals( objectName.toLowerCase() ) ) {
+			if( instance.getObjectName().replaceAll("\\.","").toLowerCase().equals( objectName.toLowerCase() ) ) {
 				return instance;
 			}
 		}
@@ -274,7 +290,7 @@ public class FederateService {
     }
     public InteractionClass getInteraction( String interactionName ) {
 		for( InteractionClass interactionClass : moduleProcessorService.getInteractionClassList().getList() ) {
-			if( interactionClass.getName().toLowerCase().equals( interactionName.toLowerCase() ) ) {
+			if( interactionClass.getName().replaceAll("\\.","").toLowerCase().equals( interactionName.toLowerCase() ) ) {
 				return interactionClass;
 			}
 		}
@@ -487,6 +503,6 @@ public class FederateService {
 		logger.warn("A interface chamou REFRESH mas nao sei o que fazer ainda.");
 		
 	}
-    
+
     
 }

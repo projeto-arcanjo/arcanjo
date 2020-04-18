@@ -26,9 +26,6 @@ public class ModuleController {
 	
 	@RequestMapping(value = "/{moduleFileName}", method = RequestMethod.GET)
 	public @ResponseBody Module getModule( @PathVariable("moduleFileName") String moduleFileName) {
-		
-		System.out.println(moduleFileName);
-		
 		return federateService.getModule( moduleFileName );
 	}
 	

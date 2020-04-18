@@ -40,6 +40,11 @@
 								type="button" class="btn btn-primary btn-flat">
 								<i class="fa fa-flag-checkered"></i>
 							</button>
+
+							<button title="Gerenciador" id="btnManager" style="margin-left:10px;" 
+								type="button" class="btn btn-primary btn-flat">
+								<i class="fa fa-gears"></i>
+							</button>
 							
 						</div>
 											
@@ -55,8 +60,6 @@
 					</div>					
 					
 				</div>
-					
-					
 			</nav>
 		</header>
 
@@ -108,10 +111,14 @@
 <script src="/resources/toast.js" type="text/javascript"></script>
 <script src="/resources/aircrafts.js" type="text/javascript"></script>
 <script src="/resources/test/teste.js" type="text/javascript"></script>
+<script src="/resources/script.js" type="text/javascript"></script>
 
 <script>
 $( document ).ready(function() {
 
+	// Faxina de interface
+	bindButtons();
+	
 	// Conecta o WebSockets
 	connect();
 	// Inicia o Cesium

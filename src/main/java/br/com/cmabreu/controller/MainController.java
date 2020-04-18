@@ -28,29 +28,18 @@ public class MainController extends BasicController  {
 		return "index";
 	}	
 	
-	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
+	@RequestMapping(value = "/manager", method = RequestMethod.GET)
 	public String dashboard(Model model, HttpSession session ) {
 		model.addAttribute( "user", getLoggedUser( session ) );
 		model.addAttribute( "midasLocation", getMidasLocation() );
-		return "dashboard";
+		return "manager";
 	}	
 	
-	@RequestMapping(value = "/mapa", method = RequestMethod.GET)
-	public String mapa(Model model, HttpSession session ) {
-		model.addAttribute( "user", getLoggedUser( session ) );
-		model.addAttribute( "midasLocation", getMidasLocation() );
-		return "mapa";
-	}	
-
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public String home(Model model, HttpSession session ) {
 		UserLesserDTO udto = getLoggedUser( session );
 		String result = "index";
-		
-		if( !udto.isAdmin() ) {
-			result = "userHome";
-		}
-		
+
 		model.addAttribute( "user", udto );
 		model.addAttribute( "midasLocation", getMidasLocation() );
 		return result;

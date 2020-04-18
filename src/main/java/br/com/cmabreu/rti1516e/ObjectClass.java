@@ -10,7 +10,7 @@ public class ObjectClass  implements Serializable {
 	private String sharing;
 	private Integer handle;
 	private List<Attribute> attributes;
-	private ObjectClass parent; 
+	//private ObjectClass parent; 
 	private String moduleName;
 	private String semantics;
 	
@@ -27,9 +27,15 @@ public class ObjectClass  implements Serializable {
 		return moduleName;
 	}
 	
+/*
+	public void setParent(ObjectClass myParent) {
+		this.parent = myParent;
+		
+	}
 	public ObjectClass getParent() {
 		return parent;
 	}
+*/
 	
 	public String getMyParentName() {
 		return myParentName;
@@ -55,13 +61,29 @@ public class ObjectClass  implements Serializable {
 		return attributes;
 	}
 	
-	public void setParent(ObjectClass myParent) {
-		this.parent = myParent;
-		
-	}
-
 	public String getSemantics() {
 		return semantics;
 	}
+
+	public void setMyParentName(String myParentName) {
+		this.myParentName = myParentName;
+	}
+
+	public void setMyName(String myName) {
+		this.myName = myName;
+	}
+
+	public void setSharing(String sharing) {
+		this.sharing = sharing;
+	}
+
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+
+	public void setSemantics(String semantics) {
+		this.semantics = semantics;
+	}
+	
 	
 }

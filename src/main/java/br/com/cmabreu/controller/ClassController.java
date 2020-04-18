@@ -30,6 +30,13 @@ public class ClassController {
 		return federateService.getClass( className );
 	}
 
+	@RequestMapping(value = "/byparentname/{parentName}", method = RequestMethod.GET)
+	public @ResponseBody List<ObjectClass> getClassByParentName( @PathVariable("parentName") String parentName) {
+		if( parentName == null ) parentName = "";
+		return federateService.getClassByParentName( parentName );
+	}
+	
+	
 	
 	@RequestMapping(value = "/byhandle/{classHandle}", method = RequestMethod.GET)
 	public @ResponseBody ObjectClass getClassByHandle( @PathVariable("classHandle") Integer classHandle) {

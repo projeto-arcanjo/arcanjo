@@ -41,7 +41,6 @@ public class ModuleProcessorService {
 	
 	
 	private void addToList( JSONObject objectClass, String parentName, String moduleName, String myFullQualifiedName ) throws Exception {
-		// The last in the chain (leaf) must process this one.
 		String sharing = JSONHelper.getString(objectClass,"sharing");
 		String semantics = JSONHelper.getString(objectClass,"semantics");
 		// Read Attributes
@@ -58,10 +57,19 @@ public class ModuleProcessorService {
     			attributes.add( new Attribute( (JSONObject)obj ) );
     		}
     		
+		} else {
+			//
 		}
-		objectList.add( new ObjectClass( parentName, myFullQualifiedName, attributes, sharing, moduleName, semantics) );
+		
+		if( objectList.exists( myFullQualifiedName ) ) {
+			objectList.update( parentName, myFullQualifiedName, attributes, sharing, moduleName, semantics );
+			
+		} else {
+			objectList.add( new ObjectClass( parentName, myFullQualifiedName, attributes, sharing, moduleName, semantics) );	
+		}
+		
+		
 	}
-	
 	
     private Integer navigate( JSONObject objectClass, String parentName, String moduleName ) throws Exception{
     	Integer counter = 0;
@@ -149,7 +157,7 @@ public class ModuleProcessorService {
     			logger.warn("Elemento 'OBJECTS' nao encontrado.");
     		}
     	}
-    	objectList.normalize();
+    	//objectList.normalize();
     }
 
     

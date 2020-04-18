@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.cmabreu.rti1516e.Attribute;
 import br.com.cmabreu.rti1516e.ObjectClass;
 
 public class ObjectClassList  implements Serializable {
@@ -44,11 +45,34 @@ public class ObjectClassList  implements Serializable {
 		return this.list;
 	}
 
+	public synchronized void update(String parentName, String myFullQualifiedName, List<Attribute> attributes, String sharing, String moduleName, String semantics) {
+		for( ObjectClass objClass : list ) {
+			if( objClass.getMyName().equals( myFullQualifiedName ) ) {
+				boolean updated = false;
+				if( objClass.getAttributes().size() == 0 ) {
+					objClass.getAttributes().addAll( attributes );
+					updated = true;
+				}
+				if( objClass.getSharing().equals("N/E") ) {
+					objClass.setSharing( sharing );
+					updated = true;
+				}
+				if( objClass.getSemantics().equals("N/E") ) {
+					objClass.setSharing( semantics );
+					updated = true;
+				}
+				if( updated ) objClass.setModuleName( moduleName );
+			}
+		}		
+	}
+
+	/*
 	public void normalize() {
 		for( ObjectClass objectClass : this.list ) {
 			ObjectClass myParent = getByName( objectClass.getMyParentName() );
 			objectClass.setParent( myParent );
 		}
 	}
+	*/
 	
 }

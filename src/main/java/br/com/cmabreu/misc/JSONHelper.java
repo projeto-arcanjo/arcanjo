@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 public class JSONHelper {
 	private static Logger logger = LoggerFactory.getLogger( JSONHelper.class );
 
-	public static String getString( JSONObject jsonObj, String key) throws Exception {
+	public static String getString( JSONObject jsonObj, String key) {
 		try {
 			//String value = jsonObj.getString( key );
 			if( jsonObj.has(key) ) {
@@ -16,14 +16,15 @@ public class JSONHelper {
 				return value;
 			} else {
 				logger.error("Key '" + key + "' not found");
-				return "N/E";
 			}
 		} catch ( Exception e ) {
+			logger.error( e.getMessage() );
 			System.out.println("--------------------------------------------");
 			System.out.println( jsonObj.toString() );
 			System.out.println("--------------------------------------------");
-			throw e;
+			
 		}
+		return "N/E";
 	}
 
 	
