@@ -40,7 +40,7 @@ public class ModuleProcessorService {
 	}
 	
 	
-	private void addToList( JSONObject objectClass, String parentName, String moduleName, String myFullQualifiedName ) throws Exception {
+	private void addToList( JSONObject objectClass, String parentName, String moduleName, String myFullQualifiedName, String singleName ) throws Exception {
 		String sharing = JSONHelper.getString(objectClass,"sharing");
 		String semantics = JSONHelper.getString(objectClass,"semantics");
 		// Read Attributes
@@ -65,7 +65,7 @@ public class ModuleProcessorService {
 			objectList.update( parentName, myFullQualifiedName, attributes, sharing, moduleName, semantics );
 			
 		} else {
-			objectList.add( new ObjectClass( parentName, myFullQualifiedName, attributes, sharing, moduleName, semantics) );	
+			objectList.add( new ObjectClass( parentName, myFullQualifiedName, attributes, sharing, moduleName, semantics, singleName) );	
 		}
 		
 		
@@ -80,12 +80,12 @@ public class ModuleProcessorService {
     	
     	if( !objectClass.has("objectClass") ) {
     		// add
-    		addToList( objectClass, parentName, moduleName, myFullQualifiedName );
+    		addToList( objectClass, parentName, moduleName, myFullQualifiedName, myName );
     		// have just me
     		counter = 1;
     	} else {
     		// add
-    		addToList( objectClass, parentName, moduleName, myFullQualifiedName );
+    		addToList( objectClass, parentName, moduleName, myFullQualifiedName, myName );
     		// Go deeper!
     		Object obj = objectClass.get("objectClass");
     		if ( obj instanceof JSONArray ) {
@@ -105,7 +105,7 @@ public class ModuleProcessorService {
     public void parseModules( List<Module> modules ) throws Exception {
     	this.objectList.getList().clear();
     	for( Module module : modules ) {
-    		logger.info("Processing file " + module.getFileName() );
+    		logger.info("Processando arquivo " + module.getFileName() );
     		JSONObject jobj = getXMLFromModuleFile( module.getFile() ).getJSONObject("objectModel");
     		
     		if( jobj.has("dataTypes") ) {
@@ -157,7 +157,7 @@ public class ModuleProcessorService {
     			logger.warn("Elemento 'OBJECTS' nao encontrado.");
     		}
     	}
-    	//objectList.normalize();
+    
     }
 
     

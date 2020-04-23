@@ -41,7 +41,7 @@ import hla.rti1516e.TransportationTypeHandle;
 @Service
 public class FederateService {
 	private RTIambassador rtiamb;
-	private FederateAmbassador fedamb;  
+   	private FederateAmbassador fedamb;  
 	private Logger logger = LoggerFactory.getLogger( FederateService.class );
 	private List<Module> modules = new ArrayList<Module>();
 	private boolean started = false;
@@ -108,11 +108,6 @@ public class FederateService {
 		return "STARTED_NOW";
     }
     
-    
-    /**
-     * Parse all XML modules found in "/foms" directory. 
-     * @throws Exception
-     */
     private void parseModules() throws Exception {
     	logger.info("Verificando Modulos");
     	moduleProcessorService.parseModules( this.modules );
@@ -120,8 +115,6 @@ public class FederateService {
     	for( ObjectClass objectClass : moduleProcessorService.getObjectList().getList() ) {
     		ObjectClassHandle objectClassHandle = this.rtiamb.getObjectClassHandle( objectClass.getMyName() );
     		objectClass.setHandle( encoderDecoder.getObjectClassHandle( objectClassHandle ) );
-    		
-    		//logger.info("  > [" +  objectClass.getHandle() + "] " + objectClass.getMyName() );
     	}
     	logger.info("Classes carregadas.");
     }
@@ -147,12 +140,11 @@ public class FederateService {
 		this.rtiamb.connect( this.fedamb, CallbackModel.HLA_IMMEDIATE );
 	}	
 
-	private void loadModules() throws Exception {
-		File fomFolderScan = new File( fomFolder );
-		logger.info("Scanning for modules. This will be the loading order:");
+	public void loadModules( File fomFolderScan ) throws Exception {
+		logger.info("Carregando modulos em " + fomFolderScan.getPath() + " na seguinte ordem:");
 		
 		// The Standard MIM must be the first one.
-		File mim = new File( fomFolder + "HLAstandardMIM.xml" ) ;
+		File mim = new File( fomFolderScan.getPath() + "/HLAstandardMIM.xml" ) ;
 		this.modules.add( new Module( mim ) );
 		// -------------------------------------------------------------
 		logger.info( "  > HLAstandardMIM.xml" );
@@ -166,6 +158,12 @@ public class FederateService {
 	        	}
 	        }
 	    }
+		
+	}
+	
+	private void loadModules() throws Exception {
+		File fomFolderScan = new File( fomFolder );
+		loadModules( fomFolderScan );
 	}
 
 	
@@ -191,13 +189,16 @@ public class FederateService {
 	}
 
 
+    public List<Module> getModules() {
+    	return this.modules;
+    }
+	
 	/*
 			METHODS USED BY CONTROLLERS
 	*/
 	
-	
 	// Modules
-    public List<Module> getModules() {
+    public List<Module> getAllModules() {
     	List<Module> result = new ArrayList<Module>();
     	for( Module module : this.modules ) {
     		String sf = module.getFileName().replace(".","");

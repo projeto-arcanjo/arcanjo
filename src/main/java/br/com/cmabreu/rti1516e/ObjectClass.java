@@ -10,33 +10,28 @@ public class ObjectClass  implements Serializable {
 	private String sharing;
 	private Integer handle;
 	private List<Attribute> attributes;
-	//private ObjectClass parent; 
 	private String moduleName;
 	private String semantics;
+	private String singleName;
 	
-	public ObjectClass(String myParent, String myName, List<Attribute> attributes, String sharing, String moduleName, String semantics) throws Exception {
+	public ObjectClass(String myParent, String myName, List<Attribute> attributes, String sharing, String moduleName, String semantics, String singleName) throws Exception {
 		this.myParentName = myParent;
 		this.myName = myName;
 		this.attributes = attributes;
 		this.moduleName = moduleName;
 		this.sharing = sharing;
 		this.semantics = semantics;
+		this.singleName = singleName;
+	}
+	
+	public String getSingleName() {
+		return singleName;
 	}
 
 	public String getModuleName() {
 		return moduleName;
 	}
-	
-/*
-	public void setParent(ObjectClass myParent) {
-		this.parent = myParent;
 		
-	}
-	public ObjectClass getParent() {
-		return parent;
-	}
-*/
-	
 	public String getMyParentName() {
 		return myParentName;
 	}

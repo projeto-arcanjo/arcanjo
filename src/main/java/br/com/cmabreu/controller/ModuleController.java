@@ -21,7 +21,7 @@ public class ModuleController {
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public @ResponseBody List<Module> getList() {
-		return federateService.getModules();
+		return federateService.getAllModules();
 	}	
 	
 	@RequestMapping(value = "/{moduleFileName}", method = RequestMethod.GET)
@@ -31,7 +31,7 @@ public class ModuleController {
 	
 	@RequestMapping(value = "/count", method = RequestMethod.GET)
 	public @ResponseBody Integer getCount() {
-		return federateService.getModules().size();
+		return federateService.getAllModules().size();
 	}
 	
 }
