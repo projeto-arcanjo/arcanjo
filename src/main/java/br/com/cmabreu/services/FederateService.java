@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import br.com.cmabreu.entities.IEntity;
 import br.com.cmabreu.managers.AircraftManager;
 import br.com.cmabreu.managers.IEntityManager;
+import br.com.cmabreu.managers.SurfaceManager;
 import br.com.cmabreu.misc.EncoderDecoder;
 import br.com.cmabreu.misc.FederateAmbassador;
 import br.com.cmabreu.model.InteractionValue;
@@ -125,6 +126,7 @@ public class FederateService {
 		// que tipo de controlador deve processar o evento.
 		this.physicalEntities = new ArrayList<IEntityManager>();
 		this.physicalEntities.add( new AircraftManager( rtiamb ) );
+		this.physicalEntities.add( new SurfaceManager( rtiamb ) );
     	
 		
     }

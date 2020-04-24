@@ -26,7 +26,18 @@ function connect() {
 			var payload =  JSON.parse( notification.body );
 			newAircraft( payload );
 		});
-	
+
+		
+		stompClient.subscribe('/platform/surface/reflectvalues', function(notification) {
+			var payload =  JSON.parse( notification.body );
+			console.log( payload );
+		});
+		
+		stompClient.subscribe('/platform/surface/discovered', function(notification) {
+			var payload =  JSON.parse( notification.body );
+			console.log( payload );
+		});		
+		
 	}, function( theMessage ) {
 		console.log( "Connect: " + theMessage );
 	});    
