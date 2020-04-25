@@ -91,7 +91,7 @@ function criaAircraftSimulada( payload ){
 		orientation: po.theOrientation,
 		show: true,
 		model: {
-			uri: '/resources/models/a319.glb',
+			uri: '/resources/models/air/a319.glb',
 			minimumPixelSize : 128,
 			maximumScale : 500,
 			color: Cesium.Color.RED
@@ -103,7 +103,7 @@ function criaAircraftSimulada( payload ){
 			fillColor: Cesium.Color.BLACK,
 			outlineWidth: 1,
 			font: '10px Consolas',
-			eyeOffset: new Cesium.Cartesian3(0.0, 130.0, 0.0)
+			eyeOffset: new Cesium.Cartesian3(0.0, 230.0, 0.0)
 		}
 	});
 	viewer.entities.add( airPlane );

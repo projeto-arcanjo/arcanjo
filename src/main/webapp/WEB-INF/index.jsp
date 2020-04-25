@@ -110,6 +110,7 @@
 <script src="/resources/globe.js" type="text/javascript"></script>
 <script src="/resources/toast.js" type="text/javascript"></script>
 <script src="/resources/aircrafts.js" type="text/javascript"></script>
+<script src="/resources/surfacevessels.js" type="text/javascript"></script>
 <script src="/resources/test/teste.js" type="text/javascript"></script>
 <script src="/resources/script.js" type="text/javascript"></script>
 

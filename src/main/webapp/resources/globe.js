@@ -30,12 +30,12 @@ function connect() {
 		
 		stompClient.subscribe('/platform/surface/reflectvalues', function(notification) {
 			var payload =  JSON.parse( notification.body );
-			console.log( payload );
+			updateSurfaceVessel( payload );
 		});
 		
 		stompClient.subscribe('/platform/surface/discovered', function(notification) {
 			var payload =  JSON.parse( notification.body );
-			console.log( payload );
+			newSurfaceVessel( payload );
 		});		
 		
 	}, function( theMessage ) {
