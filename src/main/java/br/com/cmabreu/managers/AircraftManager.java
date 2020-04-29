@@ -11,13 +11,15 @@ import br.com.cmabreu.entities.Aircraft;
 import br.com.cmabreu.misc.EncoderDecoder;
 import hla.rti1516e.AttributeHandle;
 import hla.rti1516e.AttributeHandleSet;
+import hla.rti1516e.AttributeHandleValueMap;
 import hla.rti1516e.ObjectClassHandle;
 import hla.rti1516e.ObjectInstanceHandle;
+import hla.rti1516e.OrderType;
 import hla.rti1516e.RTIambassador;
 
 public class AircraftManager implements IEntityManager 	{
 	private RTIambassador rtiAmb;
-	
+	private SimpMessagingTemplate simpMessagingTemplate;
 	protected AttributeHandleSet attributes;
 	protected ObjectClassHandle entityHandle;
 	protected AttributeHandle entityTypeHandle;
@@ -37,6 +39,32 @@ public class AircraftManager implements IEntityManager 	{
 	* 	Metodos da interface IPhysicalEntityManager
 	* 
 	******************************************************************************************************************/
+
+	@Override
+	public void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
+		Aircraft pe = this.doIHaveThisObject( theObject );
+		if( pe != null ) {
+			try {
+				pe.reflectAttributeValues( theObject, theAttributes, tag, sentOrder );
+				this.simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", pe ); 
+			} catch ( Exception e ) {
+				//
+			}
+		}
+	}
+	
+	
+	@Override
+	public void sendObjectsToInterface() {
+		for( Aircraft aircraft : aircrafts  ) {
+			try {
+				this.simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", aircraft );
+			} catch ( Exception e ) {
+				
+			}
+		}
+	}
+	
 	@Override
 	public boolean isAKindOfMe( ObjectClassHandle classHandle ) {
 		int other = decoder.getObjectClassHandle( classHandle );
@@ -44,15 +72,12 @@ public class AircraftManager implements IEntityManager 	{
 	}
 	
 	@Override
-	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName, SimpMessagingTemplate simpMessagingTemplate ) {
-		//int handle = decoder.getObjectHandle( theObject );
+	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName ) {
 		try {
 			Aircraft xpac = new Aircraft( theObject, this, objectName );
-			aircrafts.add( xpac );
-			simpMessagingTemplate.convertAndSend("/platform/aircraft/discovered", xpac ); 
-			
-			rtiAmb.requestAttributeValueUpdate( theObject, this.attributes, "ARCANJO_ATTR_REQ".getBytes() );
-			
+			this.aircrafts.add( xpac );
+			this.simpMessagingTemplate.convertAndSend("/platform/aircraft/discovered", xpac ); 
+			this.rtiAmb.requestAttributeValueUpdate( theObject, this.attributes, "ARCANJO_ATTR_REQ".getBytes() );
 		} catch ( Exception e ) {
 			logger.error("Erro ao criar aeronave: " + e.getMessage() );
 		}
@@ -82,7 +107,8 @@ public class AircraftManager implements IEntityManager 	{
 	/** **************************************************************************************************************  */
 	
 	
-	public AircraftManager( RTIambassador rtiAmb) throws Exception {
+	public AircraftManager( RTIambassador rtiAmb, SimpMessagingTemplate simpMessagingTemplate ) throws Exception {
+		this.simpMessagingTemplate = simpMessagingTemplate;
 		logger.info("Aircraft Manager ativo");
 		this.decoder = new EncoderDecoder();
 		this.aircrafts = new ArrayList<Aircraft>();
@@ -163,6 +189,6 @@ public class AircraftManager implements IEntityManager 	{
 	public EncoderDecoder getDecoder() {
 		return decoder;
 	}
-	
+
 	
 }

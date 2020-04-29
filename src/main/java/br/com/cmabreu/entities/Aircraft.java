@@ -2,7 +2,6 @@ package br.com.cmabreu.entities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import br.com.cmabreu.codec.Codec;
 import br.com.cmabreu.codec.EntityIdentifier;
@@ -73,7 +72,7 @@ public class Aircraft implements IEntity {
 
 	@Override
 	public Aircraft reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, 
-			byte[] tag, OrderType sentOrder, SimpMessagingTemplate simpMessagingTemplate) throws Exception {
+			byte[] tag, OrderType sentOrder ) throws Exception {
 		 
 		for (AttributeHandle attributeHandle : theAttributes.keySet() ) {
 			// Guarda os valores do atributo 
@@ -105,9 +104,6 @@ public class Aircraft implements IEntity {
 			
 		}
 		
-		// Envia este objeto JA ATUALIZADO para a interface WEB
-		simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", this ); 
-
 		// Devolve este objeto atualizado para quem chamou. Vai que... 
 		return this;
 	}

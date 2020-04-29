@@ -125,8 +125,8 @@ public class FederateService {
 		// dessa forma, quando chegar eventos eu posso descobrir
 		// que tipo de controlador deve processar o evento.
 		this.physicalEntities = new ArrayList<IEntityManager>();
-		this.physicalEntities.add( new AircraftManager( rtiamb ) );
-		this.physicalEntities.add( new SurfaceManager( rtiamb ) );
+		this.physicalEntities.add( new AircraftManager( rtiamb, simpMessagingTemplate ) );
+		this.physicalEntities.add( new SurfaceManager( rtiamb, simpMessagingTemplate ) );
     	
 		
     }
@@ -361,6 +361,13 @@ public class FederateService {
 		return false;
 	}	
 	
+	// Responde para a interface reenviando todos os objetos que foram recebidos
+	public void sendObjectsToInterface(){
+		for( IEntityManager pe : this.physicalEntities ) {
+			pe.sendObjectsToInterface();
+		}
+	}
+	
 	
 	/**
 	 * 
@@ -376,7 +383,7 @@ public class FederateService {
 		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
 		for( IEntityManager pe : this.physicalEntities ) {
 			if( pe.isAKindOfMe( theObjectClass ) ) {
-				pe.discoverObjectInstance( theObject, theObjectClass, objectName, simpMessagingTemplate );
+				pe.discoverObjectInstance( theObject, theObjectClass, objectName );
 			}
 		}
 		
@@ -405,10 +412,7 @@ public class FederateService {
 		// Procura qual controlador possui a instancia deste objeto e passa o evento pra ele
 		try {
 			for( IEntityManager pem : this.physicalEntities ) {
-				IEntity pe = pem.doIHaveThisObject(theObject);
-				if( pe != null ) {
-					pe.reflectAttributeValues( theObject, theAttributes, tag, sentOrder, simpMessagingTemplate);
-				}
+				pem.reflectAttributeValues(theObject, theAttributes, tag, sentOrder);
 			}
 		} catch ( Exception e ) {
 			logger.error("Erro ao receber atualizacao de atributos");
