@@ -75,8 +75,8 @@ function getPositionOrientationData( payload ){
 // Funcao centralizadora.
 // Decidir como vai criar tipos de simulacao diferentes.
 function criaSurfaceVessel( payload ){
-	// return criaSurfaceVesselContrutiva( payload );	
-	return criaSurfaceVesselSimulada( payload );	
+	return criaSurfaceVesselContrutiva( payload );	
+	//return criaSurfaceVesselSimulada( payload );	
 }
 
 function criaSurfaceVesselSimulada( payload ){
@@ -96,6 +96,7 @@ function criaSurfaceVesselSimulada( payload ){
             maximumScale : 200,
             allowPicking : false
 		},
+		/*
 		label: {
 			text: payload.marking.text,
 			style: Cesium.LabelStyle.FILL,
@@ -104,6 +105,7 @@ function criaSurfaceVesselSimulada( payload ){
 			font: '10px Consolas',
 			eyeOffset: new Cesium.Cartesian3(0.0, 230.0, 0.0)
 		}
+		*/
 	});
 	viewer.entities.add( surfaceVessel );
 

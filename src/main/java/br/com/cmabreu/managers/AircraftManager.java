@@ -46,11 +46,13 @@ public class AircraftManager implements IEntityManager 	{
 	@Override
 	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName, SimpMessagingTemplate simpMessagingTemplate ) {
 		//int handle = decoder.getObjectHandle( theObject );
-		System.out.println("Nova aeronave '" + objectName + "' descoberta");
 		try {
 			Aircraft xpac = new Aircraft( theObject, this, objectName );
 			aircrafts.add( xpac );
 			simpMessagingTemplate.convertAndSend("/platform/aircraft/discovered", xpac ); 
+			
+			rtiAmb.requestAttributeValueUpdate( theObject, this.attributes, "ARCANJO_ATTR_REQ".getBytes() );
+			
 		} catch ( Exception e ) {
 			logger.error("Erro ao criar aeronave: " + e.getMessage() );
 		}
@@ -99,14 +101,14 @@ public class AircraftManager implements IEntityManager 	{
 		this.markingHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "Marking");  	                   
 		this.damageStateHandle = this.rtiAmb.getAttributeHandle(entityHandle, "DamageState");
 		
-        AttributeHandleSet attributes = this.rtiAmb.getAttributeHandleSetFactory().create();
-		attributes.add( this.entityTypeHandle );
-		attributes.add( this.spatialHandle );
-		attributes.add( this.forceIdentifierHandle );
-		attributes.add( this.markingHandle );
-		attributes.add( this.isConcealedHandle );
-		attributes.add( this.entityIdentifierHandle );
-		attributes.add( this.damageStateHandle );
+		this.attributes = this.rtiAmb.getAttributeHandleSetFactory().create();
+		this.attributes.add( this.entityTypeHandle );
+		this.attributes.add( this.spatialHandle );
+		this.attributes.add( this.forceIdentifierHandle );
+		this.attributes.add( this.markingHandle );
+		this.attributes.add( this.isConcealedHandle );
+		this.attributes.add( this.entityIdentifierHandle );
+		this.attributes.add( this.damageStateHandle );
         
         this.rtiAmb.subscribeObjectClassAttributes( this.entityHandle, attributes );   
         
