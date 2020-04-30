@@ -165,16 +165,30 @@ function updatePanelFooter( position ) {
 
 	var coordHDMS = convertDMS(mapPointerLatitude,mapPointerLongitude);
 
-	jQuery( document ).ready(function( jQuery ) {
-		jQuery("#mapLat").text( mapPointerLatitude );
-		jQuery("#mapLon").text( mapPointerLongitude );    	    
-		jQuery("#mapHei").text( mapPointerHeight + 'm' );    	    
-		jQuery("#mapUtm").text( latLonToUTM(mapPointerLongitude, mapPointerLatitude  ) );    	    
-		jQuery("#mapHdmsLat").text( coordHDMS.lat + " " + coordHDMS.latCard );
-		jQuery("#mapHdmsLon").text( coordHDMS.lon + " " + coordHDMS.lonCard );
-	});
-	
 }
+
+jQuery( document ).ready(function( jQuery ) {
+	jQuery("#mapLat").text( mapPointerLatitude );
+	jQuery("#mapLon").text( mapPointerLongitude );    	    
+	jQuery("#mapHei").text( mapPointerHeight + 'm' );    	    
+	jQuery("#mapUtm").text( latLonToUTM(mapPointerLongitude, mapPointerLatitude  ) );    	    
+	jQuery("#mapHdmsLat").text( coordHDMS.lat + " " + coordHDMS.latCard );
+	jQuery("#mapHdmsLon").text( coordHDMS.lon + " " + coordHDMS.lonCard );
+	
+    jQuery.ajax({
+		url:"/instances/refresh", 
+		type: "GET", 
+		success: function( obj ) {
+			console.log('Solicitado o envio dos objetos cadastrados.');
+		},
+	    error: function(xhr, textStatus) {
+	    	//
+	    }, 		
+    });
+	
+	
+});
+
 
 jQuery(window).on("resize", applyMargins);
 

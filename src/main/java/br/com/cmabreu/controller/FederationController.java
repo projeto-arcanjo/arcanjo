@@ -40,12 +40,6 @@ public class FederationController {
 		return federateService.isStarted();
 	}
 		
-	@RequestMapping(value = "/federatecount", method = RequestMethod.GET)
-	public @ResponseBody Integer getFederatesCount() {
-		return federateService.getFederateCount();
-	}
-
-	
 	@RequestMapping(value = "/config", method = RequestMethod.GET)
 	public @ResponseBody Config getConfig() {
 		return new Config( federateService.getFederationName(), federateService.getHlaVersion() );

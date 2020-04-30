@@ -9,7 +9,7 @@ import hla.rti1516e.OrderType;
 public interface IEntityManager {
 	boolean isAKindOfMe( ObjectClassHandle classHandle );
 	IEntity doIHaveThisObject( ObjectInstanceHandle theObject );
-	void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName );
+	void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName, String classeTipo );
 	void removeObjectInstance( ObjectInstanceHandle theObject );
 	void sendObjectsToInterface();
 	void reflectAttributeValues( ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder );

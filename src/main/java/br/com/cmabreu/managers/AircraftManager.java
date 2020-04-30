@@ -65,6 +65,7 @@ public class AircraftManager implements IEntityManager 	{
 		}
 	}
 	
+	
 	@Override
 	public boolean isAKindOfMe( ObjectClassHandle classHandle ) {
 		int other = decoder.getObjectClassHandle( classHandle );
@@ -72,9 +73,9 @@ public class AircraftManager implements IEntityManager 	{
 	}
 	
 	@Override
-	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName ) {
+	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName, String classeTipo ) {
 		try {
-			Aircraft xpac = new Aircraft( theObject, this, objectName );
+			Aircraft xpac = new Aircraft( theObject, this, objectName, classeTipo );
 			this.aircrafts.add( xpac );
 			this.simpMessagingTemplate.convertAndSend("/platform/aircraft/discovered", xpac ); 
 			this.rtiAmb.requestAttributeValueUpdate( theObject, this.attributes, "ARCANJO_ATTR_REQ".getBytes() );
@@ -95,9 +96,8 @@ public class AircraftManager implements IEntityManager 	{
 	
 	@Override
 	public void removeObjectInstance(ObjectInstanceHandle theObject){
-		int other = decoder.getObjectHandle( theObject );
 		for( Aircraft ac : this.aircrafts ) {
-			if( other == decoder.getObjectHandle( ac.getTheObjectInstance() ) ) {
+			if( theObject.equals( ac.getTheObjectInstance() ) ) {
 				logger.error("Preciso remover a aeronave '" + ac.getObjectName() + "' mas nao sei como. Ela continua comigo!");
 				// REMOVE DA LISTA
 			}

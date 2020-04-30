@@ -30,6 +30,8 @@ public class SurfaceVessel implements IEntity {
 	private byte damageState;	
 	// *********************************************
 	
+	private String classeTipo;
+	
 	private Logger logger = LoggerFactory.getLogger( SurfaceVessel.class );
 	private ObjectInstanceHandle objectInstanceHandle;
 	private String objectName;
@@ -52,7 +54,8 @@ public class SurfaceVessel implements IEntity {
 	private double longitude;
 	private double altitude;	
 	
-	public SurfaceVessel( ObjectInstanceHandle theObjectInstance, SurfaceManager manager, String objectName ) throws Exception {
+	public SurfaceVessel( ObjectInstanceHandle theObjectInstance, SurfaceManager manager, String objectName, String classeTipo ) throws Exception {
+		this.classeTipo = classeTipo;
 		this.encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory(); 
 		logger.info("Nova aeronave criada: " + objectName );
 		this.objectInstanceHandle = theObjectInstance;
@@ -60,6 +63,10 @@ public class SurfaceVessel implements IEntity {
 		this.manager = manager;
 		this.codec = new Codec( this.encoderFactory );
 		this.env = new Environment();
+	}
+	
+	public String getClasseTipo() {
+		return classeTipo;
 	}
 	
 	public String getObjectName() {

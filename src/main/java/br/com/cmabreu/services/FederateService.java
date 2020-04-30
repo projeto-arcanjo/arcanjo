@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import br.com.cmabreu.entities.IEntity;
 import br.com.cmabreu.managers.AircraftManager;
 import br.com.cmabreu.managers.IEntityManager;
 import br.com.cmabreu.managers.SurfaceManager;
@@ -24,7 +23,6 @@ import br.com.cmabreu.model.Module;
 import br.com.cmabreu.model.ObjectClassList;
 import br.com.cmabreu.rti1516e.InteractionClass;
 import br.com.cmabreu.rti1516e.ObjectClass;
-import br.com.cmabreu.rti1516e.ObjectInstance;
 import hla.rti1516e.AttributeHandleValueMap;
 import hla.rti1516e.CallbackModel;
 import hla.rti1516e.FederateAmbassador.SupplementalReceiveInfo;
@@ -48,7 +46,6 @@ public class FederateService {
 	private boolean started = false;
 	private String hlaVersion;
 	
-	private List<ObjectInstance> instances = new ArrayList<ObjectInstance>();
 	private EncoderDecoder encoderDecoder;
 	private double federateTime;
 	private boolean regulating;
@@ -268,25 +265,6 @@ public class FederateService {
 		return null;
     }
 
-    // Instances
-    public List<ObjectInstance> getInstances(){
-    	return instances;
-    }
-    public ObjectInstance getInstance( Integer objectInstanceHandle ) {
-		for( ObjectInstance instance : instances ) {
-			if( instance.getObjectInstanceHandle() == objectInstanceHandle ) return instance;
-		}
-		return null;
-    }
-    public ObjectInstance getInstance( String objectName ) {
-		for( ObjectInstance instance : instances  ) {
-			if( instance.getObjectName().replaceAll("\\.","").toLowerCase().equals( objectName.toLowerCase() ) ) {
-				return instance;
-			}
-		}
-		return null;
-    }
-    
     // Interactions
     public List<InteractionClass> getInteractions(){
     	return moduleProcessorService.getInteractionClassList().getList();
@@ -336,33 +314,15 @@ public class FederateService {
 		ObjectClassList classList = moduleProcessorService.getObjectList();
 		
 		for( ObjectClass objectClass : classList.getList() ) {
-			if(   objectClass.getHandle() == encoderDecoder.getObjectClassHandle( theObjectClass ) ) {
-				logger.info( "class " + theObjectClass + " is " + objectClass.getMyName() );
-				return objectClass;
-			}
+			if(   objectClass.getHandle() == encoderDecoder.getObjectClassHandle( theObjectClass ) ) return objectClass;
 		}
 		return null;
 	}
 	
-	private synchronized boolean instanceExists( int handle ) {
-		for( ObjectInstance instance : instances ) {
-			if( instance.getObjectInstanceHandle() == handle ) return true;
-		}
-		return false;
-	}
-	
-	private synchronized boolean instanceRemove( int handle ) {
-		for( ObjectInstance instance : instances ) {
-			if( instance.getObjectInstanceHandle() == handle ) {
-				instances.remove( instance );
-				return true;
-			}
-		}
-		return false;
-	}	
-	
+
 	// Responde para a interface reenviando todos os objetos que foram recebidos
 	public void sendObjectsToInterface(){
+		logger.info("uma interface solicitou todos os objetos cadastrados");
 		for( IEntityManager pe : this.physicalEntities ) {
 			pe.sendObjectsToInterface();
 		}
@@ -379,32 +339,27 @@ public class FederateService {
 	
 	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName ) {
 		logger.info("new object (handle " + theObject + ") discovered: " + objectName + " of class " + theObjectClass );
+		String classeTipo = "N/E";
+		
+		try {
+			// Metodo para descobrir que tipo de class eh esse objeto novo que entrou
+			// Isso vai ser util para o Gateway Portico-Pitch
+			ObjectClass objectClass = whatIsThis(theObjectClass);
+			classeTipo = objectClass.getMyName();
+			logger.info( "novo objeto " + objectName + " e um " + classeTipo );
+		} catch( Exception e ) {
+			logger.warn("o novo objeto " + objectName + " nao pode ser classificado.");
+		}
+		
 		
 		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
 		for( IEntityManager pe : this.physicalEntities ) {
 			if( pe.isAKindOfMe( theObjectClass ) ) {
-				pe.discoverObjectInstance( theObject, theObjectClass, objectName );
+				pe.discoverObjectInstance( theObject, theObjectClass, objectName, classeTipo );
 			}
 		}
 		
 		
-		try {
-			ObjectClass objectClass = whatIsThis(theObjectClass);
-			if( objectClass != null ) {
-				ObjectInstance instance = new ObjectInstance( encoderDecoder.getObjectHandle( theObject ), objectClass, objectName );
-				if( !instanceExists( instance.getObjectInstanceHandle() ) ) {
-					instances.add( instance );
-					logger.info( "Sending new instance '" + objectName + "' to the frontend..." );
-					simpMessagingTemplate.convertAndSend("/instances/new", instance );
-				} else {
-					logger.warn( objectName + " is already in my list.");
-				}
-			} else {
-				logger.warn("cannot find any class handle for object [" + theObjectClass + "] - " + objectName );
-			}
-		} catch( Exception e ) {
-			logger.error( e.getMessage() );
-		}
 	}
 
 	public void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
@@ -422,19 +377,9 @@ public class FederateService {
 
 		
 	public void removeObjectInstance(ObjectInstanceHandle theObject, byte[] tag, OrderType orderType, SupplementalRemoveInfo supInfo) {
-		Integer handle = encoderDecoder.getObjectHandle( theObject );
-		
-		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
 		for( IEntityManager pem : this.physicalEntities ) {
-			IEntity pe = pem.doIHaveThisObject(theObject);
-			if( pe != null ) {
-				pem.removeObjectInstance( theObject );
-			}
+			pem.removeObjectInstance( theObject );
 		}
-		
-		// Remove do meu controle (interface)
-		instanceRemove( handle );
-		simpMessagingTemplate.convertAndSend("/instances/remove", handle );
 	}
 
 	public void announceSynchronizationPoint(String label, byte[] tag){
@@ -488,24 +433,7 @@ public class FederateService {
 		if( !found ) logger.error("Cannot find handle " + interactionClassHandle + " in my interaction list" );
 		
 	}
-
 	
-	public Integer getFederateCount() {
-		Integer result = 0;
-		for( ObjectInstance obj : getInstances() ) {
-			if( obj.getObjectName().startsWith("MOM.Federat") ) result++;
-		}
-		return result;
-	}
-
-	public Integer getInstancesCount() {
-		Integer result = 0;
-		for( ObjectInstance obj : getInstances() ) {
-			if( !obj.getObjectName().startsWith("MOM.Federat") ) result++;
-		}
-		return result;
-	}
-
 	public void refreshData() {
 		logger.warn("A interface chamou REFRESH mas nao sei o que fazer ainda.");
 		

@@ -38,6 +38,7 @@ public class Aircraft implements IEntity {
 	private EncoderFactory encoderFactory;
 	private Environment env;
 	
+	private String classeTipo;
 	
 	private double velocityX;
 	private double velocityY;
@@ -52,7 +53,8 @@ public class Aircraft implements IEntity {
 	private double longitude;
 	private double altitude;	
 	
-	public Aircraft( ObjectInstanceHandle theObjectInstance, AircraftManager manager, String objectName ) throws Exception {
+	public Aircraft( ObjectInstanceHandle theObjectInstance, AircraftManager manager, String objectName, String classeTipo ) throws Exception {
+		this.classeTipo = classeTipo;
 		this.encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory(); 
 		logger.info("Nova aeronave criada: " + objectName );
 		this.objectInstanceHandle = theObjectInstance;
@@ -60,6 +62,10 @@ public class Aircraft implements IEntity {
 		this.manager = manager;
 		this.codec = new Codec( this.encoderFactory );
 		this.env = new Environment();
+	}
+	
+	public String getClasseTipo() {
+		return classeTipo;
 	}
 	
 	public String getObjectName() {
