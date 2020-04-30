@@ -1,10 +1,11 @@
 package br.com.cmabreu.services;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,6 @@ public class FederateService {
    	private FederateAmbassador fedamb;  
 	private Logger logger = LoggerFactory.getLogger( FederateService.class );
 	private List<Module> modules = new ArrayList<Module>();
-	private boolean started = false;
 	private String hlaVersion;
 	
 	private EncoderDecoder encoderDecoder;
@@ -77,10 +77,6 @@ public class FederateService {
 		}
 	}
 	
-    public boolean isStarted() {
-    	return started;
-    }
-    
     public String getHlaVersion() {
 		return hlaVersion;
 	}
@@ -89,8 +85,12 @@ public class FederateService {
     	return this.federationName;
     }
     
-    public String startRti() throws Exception {
-    	if( started ) return "ALREADY_STARTED";
+    @PostConstruct
+    public void initializer() {
+		this.physicalEntities = new ArrayList<IEntityManager>();
+    }
+    
+    public void startRti() throws Exception {
     	if( !fomFolder.endsWith("/") ) fomFolder = fomFolder + "/";
 		createRtiAmbassador();
 		connect();
@@ -102,14 +102,12 @@ public class FederateService {
 		
 		subscribeToAll();
 		hlaVersion = rtiamb.getHLAversion();
-		started = true;
-		return "STARTED_NOW";
     }
     
     private void parseModules() throws Exception {
     	logger.info("Verificando Modulos");
     	moduleProcessorService.parseModules( this.modules );
-    	logger.info("Carregando Classes dos Modulos");
+    	logger.info("Carregando Classes dos modulos...");
     	for( ObjectClass objectClass : moduleProcessorService.getObjectList().getList() ) {
     		ObjectClassHandle objectClassHandle = this.rtiamb.getObjectClassHandle( objectClass.getMyName() );
     		objectClass.setHandle( encoderDecoder.getObjectClassHandle( objectClassHandle ) );
@@ -117,15 +115,21 @@ public class FederateService {
     	logger.info("Classes carregadas.");
     }
     
+    
+    private void addPhysicalManager( IEntityManager manager ) {
+    	this.physicalEntities.add( manager );
+    	logger.info( "Gerenciador " + manager.getClassFomName() + " adicionado." );
+    }
+
+    
+	// Adiciona todo tipo de controladores de entidades em uma lista
+	// dessa forma, quando chegar eventos eu posso descobrir
+	// que tipo de controlador deve processar o evento.
+    // Os controladores tambem sao encarrregados de subscrever e publicar
+    // suas classes
     private void subscribeToAll() throws Exception {
-		// Adiciona todo tipo de controladores de entidades em uma lista
-		// dessa forma, quando chegar eventos eu posso descobrir
-		// que tipo de controlador deve processar o evento.
-		this.physicalEntities = new ArrayList<IEntityManager>();
-		this.physicalEntities.add( new AircraftManager( rtiamb, simpMessagingTemplate ) );
-		this.physicalEntities.add( new SurfaceManager( rtiamb, simpMessagingTemplate ) );
-    	
-		
+		this.addPhysicalManager( new AircraftManager( rtiamb, simpMessagingTemplate ) );
+		this.addPhysicalManager( new SurfaceManager( rtiamb, simpMessagingTemplate ) );
     }
     
 	private void createRtiAmbassador() throws Exception {
@@ -175,11 +179,10 @@ public class FederateService {
 			for (int i =0; i < this.modules.size(); i++) modules[i] = this.modules.get(i).getFile().toURI().toURL(); 
 			rtiamb.createFederationExecution( federationName, modules );
 			logger.info( "Created Federation. HLA Version " + rtiamb.getHLAversion() );
-		} catch( MalformedURLException urle )	{
-			logger.error( "Exception loading one of the FOM modules from disk: " + urle.getMessage() );
-			urle.printStackTrace();
-			return;
+		} catch( Exception urle )	{
+			logger.error( urle.getMessage() );
 		}
+		
 	}	
 	
 	private void joinFederation( String federationName, String federateName ) throws Exception  {
@@ -321,11 +324,15 @@ public class FederateService {
 	
 
 	// Responde para a interface reenviando todos os objetos que foram recebidos
-	public void sendObjectsToInterface(){
+	public int sendObjectsToInterface(){
+		int count = 0;
 		logger.info("uma interface solicitou todos os objetos cadastrados");
 		for( IEntityManager pe : this.physicalEntities ) {
-			pe.sendObjectsToInterface();
+			int cc = pe.sendObjectsToInterface();
+			logger.info( cc + " objetos enviados por " + pe.getClassFomName() );
+			count = count + cc;
 		}
+		return count;
 	}
 	
 	
@@ -338,7 +345,7 @@ public class FederateService {
 
 	
 	public void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName ) {
-		logger.info("new object (handle " + theObject + ") discovered: " + objectName + " of class " + theObjectClass );
+		logger.info("Novo Objeto (handle " + theObject + ") descoberto: " + objectName );
 		String classeTipo = "N/E";
 		
 		try {
@@ -346,11 +353,10 @@ public class FederateService {
 			// Isso vai ser util para o Gateway Portico-Pitch
 			ObjectClass objectClass = whatIsThis(theObjectClass);
 			classeTipo = objectClass.getMyName();
-			logger.info( "novo objeto " + objectName + " e um " + classeTipo );
+			logger.info( "Novo objeto " + objectName + " e um " + classeTipo );
 		} catch( Exception e ) {
 			logger.warn("o novo objeto " + objectName + " nao pode ser classificado.");
 		}
-		
 		
 		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
 		for( IEntityManager pe : this.physicalEntities ) {
@@ -434,10 +440,5 @@ public class FederateService {
 		
 	}
 	
-	public void refreshData() {
-		logger.warn("A interface chamou REFRESH mas nao sei o que fazer ainda.");
-		
-	}
-
     
 }

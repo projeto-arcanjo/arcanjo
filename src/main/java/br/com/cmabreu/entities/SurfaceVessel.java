@@ -57,7 +57,7 @@ public class SurfaceVessel implements IEntity {
 	public SurfaceVessel( ObjectInstanceHandle theObjectInstance, SurfaceManager manager, String objectName, String classeTipo ) throws Exception {
 		this.classeTipo = classeTipo;
 		this.encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory(); 
-		logger.info("Nova aeronave criada: " + objectName );
+		logger.info("Novo SurfaceVessel criado: " + objectName );
 		this.objectInstanceHandle = theObjectInstance;
 		this.objectName = objectName;
 		this.manager = manager;

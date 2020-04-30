@@ -11,6 +11,7 @@ public interface IEntityManager {
 	IEntity doIHaveThisObject( ObjectInstanceHandle theObject );
 	void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName, String classeTipo );
 	void removeObjectInstance( ObjectInstanceHandle theObject );
-	void sendObjectsToInterface();
+	int sendObjectsToInterface();
 	void reflectAttributeValues( ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder );
+	String getClassFomName();
 }

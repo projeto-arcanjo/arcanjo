@@ -17,32 +17,10 @@ public class FederationController {
 	@Autowired
 	private FederateService federateService;	
 	
-	@RequestMapping(value = "/start", method = RequestMethod.GET)
-	public @ResponseBody String startFederation() {
-		String result = "UNDEFINED"; 
-		try {
-			result = federateService.startRti();
-		} catch ( Exception e ) {
-			e.printStackTrace();
-		}
-		return result;
-	}	
-
-
-	
-	@RequestMapping(value = "/refresh", method = RequestMethod.GET)
-	public @ResponseBody Boolean refreshData() {
-		try {
-			federateService.refreshData();
-		} catch ( Exception e ) {
-			e.printStackTrace();
-		}
-		return federateService.isStarted();
-	}
-		
 	@RequestMapping(value = "/config", method = RequestMethod.GET)
 	public @ResponseBody Config getConfig() {
 		return new Config( federateService.getFederationName(), federateService.getHlaVersion() );
 	}	
+
 	
 }

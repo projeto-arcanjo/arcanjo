@@ -29,7 +29,7 @@ public class AircraftManager implements IEntityManager 	{
 	protected AttributeHandle isConcealedHandle;
 	protected AttributeHandle entityIdentifierHandle;
 	protected AttributeHandle damageStateHandle;
-	
+	private String classFomName;
 	private List<Aircraft> aircrafts;
 	private EncoderDecoder decoder;
 	private Logger logger = LoggerFactory.getLogger( AircraftManager.class );
@@ -55,7 +55,7 @@ public class AircraftManager implements IEntityManager 	{
 	
 	
 	@Override
-	public void sendObjectsToInterface() {
+	public int sendObjectsToInterface() {
 		for( Aircraft aircraft : aircrafts  ) {
 			try {
 				this.simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", aircraft );
@@ -63,6 +63,7 @@ public class AircraftManager implements IEntityManager 	{
 				
 			}
 		}
+		return aircrafts.size();
 	}
 	
 	
@@ -104,16 +105,23 @@ public class AircraftManager implements IEntityManager 	{
 		}
 	}
 	
+	@Override
+	public String getClassFomName() {
+		return classFomName;
+	}
+	
+	
 	/** **************************************************************************************************************  */
 	
 	
 	public AircraftManager( RTIambassador rtiAmb, SimpMessagingTemplate simpMessagingTemplate ) throws Exception {
+		this.classFomName = "BaseEntity.PhysicalEntity.Platform.Aircraft";
 		this.simpMessagingTemplate = simpMessagingTemplate;
 		logger.info("Aircraft Manager ativo");
 		this.decoder = new EncoderDecoder();
 		this.aircrafts = new ArrayList<Aircraft>();
 		this.rtiAmb = rtiAmb;
-		this.entityHandle = rtiAmb.getObjectClassHandle("BaseEntity.PhysicalEntity.Platform.Aircraft");
+		this.entityHandle = rtiAmb.getObjectClassHandle( classFomName );
 		this.subscribe();
 	}
 	

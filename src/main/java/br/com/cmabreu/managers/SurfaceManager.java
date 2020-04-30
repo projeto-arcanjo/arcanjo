@@ -29,7 +29,7 @@ public class SurfaceManager implements IEntityManager 	{
 	protected AttributeHandle isConcealedHandle;
 	protected AttributeHandle entityIdentifierHandle;
 	protected AttributeHandle damageStateHandle;
-	
+	private String classFomName;
 	private List<SurfaceVessel> vessels;
 	private EncoderDecoder decoder;
 	private Logger logger = LoggerFactory.getLogger( SurfaceManager.class );
@@ -55,7 +55,7 @@ public class SurfaceManager implements IEntityManager 	{
 	
 	
 	@Override
-	public void sendObjectsToInterface() {
+	public int sendObjectsToInterface() {
 		for( SurfaceVessel vessel : vessels ) {
 			try {
 				simpMessagingTemplate.convertAndSend("/platform/surface/reflectvalues", vessel );
@@ -63,6 +63,7 @@ public class SurfaceManager implements IEntityManager 	{
 				
 			}
 		}
+		return vessels.size();
 	}
 
 	
@@ -104,16 +105,22 @@ public class SurfaceManager implements IEntityManager 	{
 		}
 	}
 	
+	@Override
+	public String getClassFomName() {
+		return classFomName;
+	}
+	
 	/** **************************************************************************************************************  */
 	
 	
 	public SurfaceManager( RTIambassador rtiAmb, SimpMessagingTemplate simpMessagingTemplate ) throws Exception {
+		this.classFomName = "BaseEntity.PhysicalEntity.Platform.SurfaceVessel";
 		this.simpMessagingTemplate = simpMessagingTemplate;
 		logger.info("SurfaceVessel Manager ativo");
 		this.decoder = new EncoderDecoder();
 		this.vessels = new ArrayList<SurfaceVessel>();
 		this.rtiAmb = rtiAmb;
-		this.entityHandle = rtiAmb.getObjectClassHandle("BaseEntity.PhysicalEntity.Platform.SurfaceVessel");
+		this.entityHandle = rtiAmb.getObjectClassHandle( classFomName );
 		this.subscribe();
 	}
 	

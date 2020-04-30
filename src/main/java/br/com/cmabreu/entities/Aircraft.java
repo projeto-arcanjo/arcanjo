@@ -56,7 +56,7 @@ public class Aircraft implements IEntity {
 	public Aircraft( ObjectInstanceHandle theObjectInstance, AircraftManager manager, String objectName, String classeTipo ) throws Exception {
 		this.classeTipo = classeTipo;
 		this.encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory(); 
-		logger.info("Nova aeronave criada: " + objectName );
+		logger.info("Novo Aircraft criado: " + objectName );
 		this.objectInstanceHandle = theObjectInstance;
 		this.objectName = objectName;
 		this.manager = manager;
