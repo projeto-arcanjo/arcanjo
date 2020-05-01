@@ -7,6 +7,46 @@ var south = -24;
 var east = -40;
 var north = -20;	
 var homeLocation = Cesium.Rectangle.fromDegrees(west, south, east, north);
+var natoSymbolSize=25;
+var mapSimulationType = "CONSTRUTIVA"; // "VIRTUAL" || "CONSTRUTIVA" 
+
+function updateCounters(){
+	var ac = Object.keys(aircrafts).length;
+	var sv = Object.keys(surfaceVessels).length;
+	var total = ac + sv;
+	$("#instancesCountNotification").text( total );
+}
+
+
+function getPositionOrientationData( payload ){
+	
+	console.log("ALERTA!! Altitude estah vindo como String !");
+	
+	var result = {};
+	var lat = payload.latitude;
+	var lon = payload.longitude;
+	var alt = payload.altitude;
+	
+	// https://mathworld.wolfram.com/EulerAngles.html
+	// theta is pitch, psi is roll, and phi is yaw/heading.	
+	var psi = payload.orientationPsi;
+	var theta = payload.orientationTheta;
+	var phi = payload.orientationPhi;
+
+	//var ellipsoid = viewer.scene.globe.ellipsoid;
+	var thePosition = Cesium.Cartesian3.fromDegrees( lon, lat, alt );
+	
+	var pitch = Cesium.Math.toRadians( theta );
+	var roll = Cesium.Math.toRadians( psi );
+	var heading = Cesium.Math.toRadians( phi );
+
+	var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+	var theOrientation = Cesium.Transforms.headingPitchRollQuaternion(thePosition, hpr);
+	result.theOrientation = theOrientation;
+	result.thePosition = thePosition;
+	return result;
+}
+
 
 function connect() {
 	var socket = new SockJS('/ws');
@@ -182,7 +222,7 @@ jQuery( document ).ready(function( jQuery ) {
 		url:"/instances/refresh", 
 		type: "GET", 
 		success: function( obj ) {
-			$("#instancesCountNotification").text( obj );
+			//$("#instancesCountNotification").text( obj );
 		},
 	    error: function(xhr, textStatus) {
 	    	//

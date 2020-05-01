@@ -1,4 +1,5 @@
 
+
 function bindButtons(){
 
     jQuery("#btnManager").click( function(){

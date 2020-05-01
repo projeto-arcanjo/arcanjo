@@ -110,6 +110,8 @@ public class Aircraft implements IEntity {
 			
 		}
 		
+		logger.info("Aeronave " + this.marking.getText() + " -> " + this.orientationPhi + " Alt: " + this.altitude );
+
 		// Devolve este objeto atualizado para quem chamou. Vai que... 
 		return this;
 	}
@@ -154,10 +156,9 @@ public class Aircraft implements IEntity {
 		this.longitude = geo[ Environment.LON ];
 		this.altitude = geo[ Environment.ALT ];
 		
-		this.orientationPhi = orientation[ SpatialVariant.PHI ]; 
-		this.orientationTheta = orientation[ SpatialVariant.THETA ]; 
 		this.orientationPsi = orientation[ SpatialVariant.PSI ];
-		
+		this.orientationTheta = orientation[ SpatialVariant.THETA ]; 
+		this.orientationPhi = orientation[ SpatialVariant.PHI ]; 
 	}
 
 	
@@ -228,7 +229,7 @@ public class Aircraft implements IEntity {
 	}
 
 	public double getAltitude() {
-		return altitude;
+		return this.altitude;
 	}
 	
 	

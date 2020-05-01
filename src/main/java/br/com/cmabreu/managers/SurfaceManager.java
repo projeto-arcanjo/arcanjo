@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import br.com.cmabreu.dto.SurfaceVesselDTO;
 import br.com.cmabreu.entities.SurfaceVessel;
 import br.com.cmabreu.misc.EncoderDecoder;
 import hla.rti1516e.AttributeHandle;
@@ -41,12 +42,12 @@ public class SurfaceManager implements IEntityManager 	{
 	******************************************************************************************************************/
 	@Override
 	public void reflectAttributeValues( ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder ) {
-		SurfaceVessel pe = this.doIHaveThisObject( theObject );
-		if( pe != null ) {
+		SurfaceVessel vessel = this.doIHaveThisObject( theObject );
+		if( vessel != null ) {
 			try {
-				pe.reflectAttributeValues( theObject, theAttributes, tag, sentOrder );
+				vessel.reflectAttributeValues( theObject, theAttributes, tag, sentOrder );
 				// Envia este objeto JA ATUALIZADO para a interface WEB
-				this.simpMessagingTemplate.convertAndSend("/platform/surface/reflectvalues", pe ); 
+				this.simpMessagingTemplate.convertAndSend("/platform/surface/reflectvalues", new SurfaceVesselDTO( vessel ) ); 
 			} catch ( Exception e ) {
 				//
 			}
@@ -58,7 +59,7 @@ public class SurfaceManager implements IEntityManager 	{
 	public int sendObjectsToInterface() {
 		for( SurfaceVessel vessel : vessels ) {
 			try {
-				simpMessagingTemplate.convertAndSend("/platform/surface/reflectvalues", vessel );
+				simpMessagingTemplate.convertAndSend("/platform/surface/reflectvalues", new SurfaceVesselDTO( vessel ) );
 			} catch ( Exception e ) {
 				
 			}
@@ -78,7 +79,7 @@ public class SurfaceManager implements IEntityManager 	{
 		try {
 			SurfaceVessel xpac = new SurfaceVessel( theObject, this, objectName, classeTipo );
 			this.vessels.add( xpac );
-			this.simpMessagingTemplate.convertAndSend("/platform/surface/discovered", xpac );
+			this.simpMessagingTemplate.convertAndSend("/platform/surface/discovered", new SurfaceVesselDTO( xpac ) );
 			this.rtiAmb.requestAttributeValueUpdate( theObject, this.attributes, "ARCANJO_ATTR_REQ".getBytes() );
 		} catch ( Exception e ) {
 			logger.error("Erro ao criar aeronave: " + e.getMessage() );

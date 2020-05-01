@@ -1,92 +1,54 @@
 var surfaceVessels = [];
 
-
-function solicitaSurfaceVessels(){
-	// pede as aeronaves ao backend.
-	// posso ter chegado aqui apos a simulaçao ja ter comecado
-	surfaceVessels = [];
-}
-
-
 function newSurfaceVessel( payload ){
 	// Decidi nao fazer nada.
 	// Nao tem atributos ou sao atributos padrao.
 }
 
 function updateSurfaceVessel( payload ){
-	// verifica se ja tenho essa aeronave
-	for( var x = 0; x < surfaceVessels.length; x++ ) {
-		var surfaceVessel = surfaceVessels[x];
-		// Verifico se este objeto ja foi recebido
-		if( surfaceVessel.objectName === payload.objectName ) {
-			// se ele ja esta na interface, so atualizo e saio
-			// coloco a aeronave Cesium no objeto de atualizacao
-			payload.surfaceVessel = surfaceVessel.surfaceVessel;
-			atualizaSurfaceVessel( payload );
-			surfaceVessels[x] = payload;
-			return;
-		}
+	
+	if( surfaceVessels[ payload.hlaObjetName ] ){
+		atualizaSurfaceVessel( payload );
+	} else {
+		// Se por qualquer motivo eu recebi uma atualizacao deste objeto
+		// mas nao conhecia ele ainda, preciso armazenar e criar na interface
+		// Ja vou criar logo na interface porque ele ja tem atributos atualizados
+		criaSurfaceVessel( payload );
+		updateCounters();
 	}
-
-	// Se por qualquer motivo eu recebi uma atualizacao deste objeto
-	// mas nao conhecia ele ainda, preciso armazenar e criar na interface
-	// Ja vou criar logo na interface porque ele ja tem atributos atualizados
-	var surfaceVessel = criaSurfaceVessel( payload );
-	payload.surfaceVessel = surfaceVessel;
-	surfaceVessels.push( payload );
 
 }
 
 function atualizaSurfaceVessel( payload ){
 	// atualizo um objeto que ja esta no mapa
-	var po = getPositionOrientationData( payload );
-	payload.surfaceVessel.position = po.thePosition;
-	payload.surfaceVessel.orientation = po.theOrientation;
+	if( mapSimulationType == "CONSTRUTIVA" ) {
+		var lat = payload.latitude;
+		var lon = payload.longitude;
+		surfaceVessels[ payload.hlaObjetName ].position = Cesium.Cartesian3.fromDegrees( lon, lat, 0.0 );
+		surfaceVessels[ payload.hlaObjetName ].properties = payload;
+	}
 	
-}
-
-function getPositionOrientationData( payload ){
-	var result = {};
-	var lat = payload.latitude;
-	var lon = payload.longitude;
-	var alt = payload.altitude;
+	if( mapSimulationType == "VIRTUAL" ) {
+		console.log("ALERTA!! Atualizacao para VIRTUAL precisa resolver o problema da altitude como String")
+	}
 	
-	// https://mathworld.wolfram.com/EulerAngles.html
-	// theta is pitch, psi is roll, and phi is yaw/heading.	
-	var orientation = payload.spatialVariant.orientation;
-	var psi = orientation[0];
-	var theta = orientation[1];
-	var phi = orientation[2];
-
-	//var ellipsoid = viewer.scene.globe.ellipsoid;
-	var thePosition = Cesium.Cartesian3.fromDegrees( lon, lat, alt );
-	
-	var pitch = Cesium.Math.toRadians( theta );
-	var roll = Cesium.Math.toRadians( psi );
-	var heading = Cesium.Math.toRadians( phi );
-
-	var hpr = new Cesium.HeadingPitchRoll(heading, roll, pitch);
-	var theOrientation = Cesium.Transforms.headingPitchRollQuaternion(thePosition, hpr);
-	result.theOrientation = theOrientation;
-	result.thePosition = thePosition;
-	return result;
 }
 
 // Funcao centralizadora.
-// Decidir como vai criar tipos de simulacao diferentes.
 function criaSurfaceVessel( payload ){
-	return criaSurfaceVesselContrutiva( payload );	
-	//return criaSurfaceVesselSimulada( payload );	
+	if( mapSimulationType == "CONSTRUTIVA" )  criaSurfaceVesselContrutiva( payload );	
+	if( mapSimulationType == "VIRTUAL" )  criaSurfaceVesselVirtual( payload );	
 }
 
-function criaSurfaceVesselSimulada( payload ){
+/*
+function criaSurfaceVesselVirtual( payload ){
 	// Cria o objeto na interface
 	// e posiciona ele no mapa
 	
 	var po = getPositionOrientationData( payload );
 
 	var surfaceVessel = new Cesium.Entity({
-		name : payload.objectName,
+		name : "SURFACE_S",
 		position: po.thePosition,
 		orientation: po.theOrientation,
 		show: true,
@@ -96,7 +58,6 @@ function criaSurfaceVesselSimulada( payload ){
             maximumScale : 200,
             allowPicking : false
 		},
-		/*
 		label: {
 			text: payload.marking.text,
 			style: Cesium.LabelStyle.FILL,
@@ -105,26 +66,26 @@ function criaSurfaceVesselSimulada( payload ){
 			font: '10px Consolas',
 			eyeOffset: new Cesium.Cartesian3(0.0, 230.0, 0.0)
 		}
-		*/
 	});
 	viewer.entities.add( surfaceVessel );
-
-	return surfaceVessel;
+	
+	surfaceVessels[ payload.hlaObjetName ] = surfaceVessel;
+	
 }
-
+*/
 
 function criaSurfaceVesselContrutiva( payload ){
+	
+	var phi = payload.orientationPhi;
+	var lat = payload.latitude;
+	var lon = payload.longitude;
+	var alt = 0;
+	var thePosition = Cesium.Cartesian3.fromDegrees( lon, lat, 0.00 );
+	
 	// https://spatialillusions.com/milsymbol/documentation.html
-	
-	var orientation = payload.spatialVariant.orientation;
-	var phi = orientation[2];	
-	var alt = payload.altitude;
-	
-	payload.altitude = 0; // Construtiva senta no chao!
-	
 	// https://spatialillusions.com/unitgenerator/
 	// MIL-STD-2525D
-	var svgUrl = "http://192.168.0.101:36002/10033000001202040400.png?size=30";
+	var svgUrl = "http://192.168.0.101:36002/10033000001202040400.png?size="+natoSymbolSize+"&additionalInformation=" + payload.hlaObjetName
 	/*
 	 * 		Simulation
 	 * 		Sea Surface
@@ -133,11 +94,10 @@ function criaSurfaceVesselContrutiva( payload ){
 	 * 		Escort
 	 */
 	
-	var po = getPositionOrientationData( payload );
-	
 	var surfaceVessel = new Cesium.Entity({
-		name : payload.objectName,
-		position: po.thePosition,
+		name : "SURFACE_C",
+		position: thePosition,
+		properties: payload,
 		billboard: {
 			image: svgUrl,
             eyeOffset: new Cesium.Cartesian3(0.0, 0.0, 0.0),
@@ -151,6 +111,6 @@ function criaSurfaceVesselContrutiva( payload ){
 	});	
 	
 	viewer.entities.add( surfaceVessel );
-	return surfaceVessel;
+	surfaceVessels[ payload.hlaObjetName ] = surfaceVessel;
 	
 }

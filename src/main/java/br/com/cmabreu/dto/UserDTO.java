@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.cmabreu.misc.UserRole;
-import br.com.cmabreu.misc.UsersClientsDTO;
 import br.com.cmabreu.model.User;
 import br.com.cmabreu.model.UserRoles;
 import br.com.cmabreu.model.UsersClients;

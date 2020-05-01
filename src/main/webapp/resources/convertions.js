@@ -9,50 +9,6 @@ function projectPosition( thePosition, height, latOffset, lonOffset ) {
 }
 
 
-function getSignName(sign) {
-    if (sign === -98)
-        return "u_turn";
-    else if (sign === -8)
-        return "u_turn_left";
-    else if (sign === -7)
-        return "keep_left";
-    else if (sign === -3)
-        return "sharp_left";
-    else if (sign === -2)
-        return "left";
-    else if (sign === -1)
-        return "slight_left";
-    else if (sign === 0)
-        return "continue";
-    else if (sign === 1)
-        return "slight_right";
-    else if (sign === 2)
-        return "right";
-    else if (sign === 3)
-        return "sharp_right";
-    else if (sign === 4)
-        return "marker-icon-red";
-    else if (sign === 5)
-        return "marker-icon-blue";
-    else if (sign === 6)
-        return "roundabout";
-    else if (sign === 7)
-        return "keep_right";
-    else if (sign === 8)
-        return "u_turn_right";
-    else if (sign === 101)
-        return "pt_start_trip";
-    else if (sign === 102)
-        return "pt_transfer_to";
-    else if (sign === 103)
-        return "pt_end_trip";
-    else
-    // throw "did not find sign " + sign;
-        return "unknown";
-};
-
-
-
 function color2(color){
 	var red = parseInt(color.charAt(0) + color.charAt(1),16)/255.0;
 	var green = parseInt(color.charAt(2) + color.charAt(3),16)/255.0;

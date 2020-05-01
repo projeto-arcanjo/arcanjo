@@ -1,4 +1,4 @@
-package br.com.cmabreu.misc;
+package br.com.cmabreu.dto;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

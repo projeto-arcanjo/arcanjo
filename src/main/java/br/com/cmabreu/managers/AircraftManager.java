@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import br.com.cmabreu.dto.AircraftDTO;
 import br.com.cmabreu.entities.Aircraft;
 import br.com.cmabreu.misc.EncoderDecoder;
 import hla.rti1516e.AttributeHandle;
@@ -42,11 +43,11 @@ public class AircraftManager implements IEntityManager 	{
 
 	@Override
 	public void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
-		Aircraft pe = this.doIHaveThisObject( theObject );
-		if( pe != null ) {
+		Aircraft aircraft = this.doIHaveThisObject( theObject );
+		if( aircraft != null ) {
 			try {
-				pe.reflectAttributeValues( theObject, theAttributes, tag, sentOrder );
-				this.simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", pe ); 
+				aircraft.reflectAttributeValues( theObject, theAttributes, tag, sentOrder );
+				this.simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", new AircraftDTO( aircraft ) );
 			} catch ( Exception e ) {
 				//
 			}
@@ -55,10 +56,10 @@ public class AircraftManager implements IEntityManager 	{
 	
 	
 	@Override
-	public int sendObjectsToInterface() {
+	public synchronized int sendObjectsToInterface() {
 		for( Aircraft aircraft : aircrafts  ) {
 			try {
-				this.simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", aircraft );
+				this.simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", new AircraftDTO( aircraft ) );
 			} catch ( Exception e ) {
 				
 			}
@@ -78,7 +79,7 @@ public class AircraftManager implements IEntityManager 	{
 		try {
 			Aircraft xpac = new Aircraft( theObject, this, objectName, classeTipo );
 			this.aircrafts.add( xpac );
-			this.simpMessagingTemplate.convertAndSend("/platform/aircraft/discovered", xpac ); 
+			this.simpMessagingTemplate.convertAndSend("/platform/aircraft/discovered", new AircraftDTO( xpac ) ); 
 			this.rtiAmb.requestAttributeValueUpdate( theObject, this.attributes, "ARCANJO_ATTR_REQ".getBytes() );
 		} catch ( Exception e ) {
 			logger.error("Erro ao criar aeronave: " + e.getMessage() );
