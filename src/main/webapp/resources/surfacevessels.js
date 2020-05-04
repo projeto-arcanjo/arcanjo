@@ -114,3 +114,20 @@ function criaSurfaceVesselContrutiva( payload ){
 	surfaceVessels[ payload.hlaObjetName ] = surfaceVessel;
 	
 }
+
+function getTr( vessel ){
+	var icon = "nk.png";
+	var nome = federate.federateName;
+	var tipoCarto = federate.hlaObjetName;
+	var sourceName = federate.classTipo;
+	
+	var theDiv = "<div style='height:37px;width:100%;'>" +
+	"<div style='float:left;width:35px;height:36px;'>" +
+	"<img title='" + sourceName + "' style='border:1px solid #cacaca;width:30px;' src='/resources/img/"+icon+"'>" +
+	"</div>" +
+	"<div style='float:left;width:80%'><div style='height:18px;border-bottom:1px solid #cacaca'><b>"+nome+"</b></div><div style='height:15px;'>"+tipoCarto+"</div></div>" + 
+	"</div>";
+	
+	var theTr = "<tr style='margin-bottom:2px;border-bottom: 2px solid #3c8dbc;' id='"+nome+"' class='instanceFoundItem' ><td colspan='2' class='layerTable'>" + theDiv + "</td></tr>";
+	return theTr;
+}

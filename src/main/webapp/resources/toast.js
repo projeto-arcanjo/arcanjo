@@ -17,13 +17,11 @@ const Toast = Swal.mixin({
 
 function fireToast( icon, title, text ){
 	
-	console.log( text );
-	
 	Toast.fire({
 		title: title,
 		text: text,
 		icon: icon,
-		footer: '<a href="#">How can I help you?</a>',
+		footer: '<a href="#">Precisa de mais informação?</a>',
 	});
 
 }

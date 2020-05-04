@@ -32,11 +32,11 @@
 						<div id="toolBarStandard" class="btn-group"
 							style="float: left; opacity: 0.6;">
 							
-							<button title="Virtual" id="toolGuia" type="button" class="btn btn-primary btn-flat"> 
+							<button title="Virtual" id="btnVirtual" type="button" class="btn btn-primary btn-flat"> 
 								<i class="fa fa-fighter-jet"></i>
 							</button>
 							
-							<button title="Construtiva" id="toolEdgvBook" style="margin-left:10px;"
+							<button title="Construtiva" id="btnConstrutiva" style="margin-left:10px;"
 								type="button" class="btn btn-primary btn-flat">
 								<i class="fa fa-flag-checkered"></i>
 							</button>
@@ -45,6 +45,12 @@
 								type="button" class="btn btn-primary btn-flat">
 								<i class="fa fa-gears"></i>
 							</button>
+
+							<button title="Atualizar Contadores" id="btnUpdateCouters" style="margin-left:10px;" 
+								type="button" class="btn btn-primary btn-flat">
+								<i class="fa fa-spin fa-refresh"></i>
+							</button>
+
 							
 						</div>
 											
@@ -90,7 +96,53 @@
 							
 						</div>			
 			
-			
+						<div id="layerContainer"
+							style="display:none;font-size: 11px; height: auto; left: 10px; position: absolute; z-index: 9999; top: 60px; width: 300px; background-color: white;">
+						
+						
+							<div class="panel" style="margin-bottom: 0px">
+								<div id="instancesPanelCounter"
+									style="z-index: 9999; right: 5px; position: absolute; height: 22px; width: 22px; text-align: right; color: white;">0</div>
+								<div style="padding: 0px;" class="box-header with-border">
+									<button style="text-align: left;" href="#collapseOne"
+										data-toggle="collapse" data-parent="#layerContainer"
+										type="button"
+										class="btn btn-block btn-primary btn-xs btn-flat">
+										<i class="fa fa-automobile"></i> &nbsp; Instâncias (Objetos)
+									</button>
+								</div>
+								<div id="collapseOne" class="panel-collapse collapse">
+									<div id="instancesContainer" style="padding: 4px; height: 400px" class="box-body">
+										<div class="table-responsive">
+											<table id="instancesTable" class="table"
+												style="margin-bottom: 0px; width: 100%"></table>
+										</div>
+									</div>
+								</div>
+							</div>						
+						
+							<div class="panel" style="margin-bottom: 0px">
+								<div id="objectsPanelCounter"
+									style="z-index: 9999; right: 5px; position: absolute; height: 22px; width: 22px; text-align: right; color: white;">0</div>
+								<div style="padding: 0px;" class="box-header with-border">
+									<button style="text-align: left;" href="#collapseTwo"
+										data-toggle="collapse" data-parent="#layerContainer"
+										type="button"
+										class="btn btn-block btn-primary btn-xs btn-flat">
+										<i class="fa fa-map-pin"></i> &nbsp; Federados
+									</button>
+								</div>
+								<div id="collapseTwo" class="panel-collapse collapse">
+									<div id="objectsContainer" style="padding: 4px; height: 400px" class="box-body">
+										<div class="table-responsive">
+											<table id="federatesTable" class="table"
+												style="margin-bottom: 0px; width: 100%"></table>
+										</div>
+									</div>
+								</div>
+							</div>						
+							
+						</div>
 			
 			
 			</div>
@@ -107,32 +159,43 @@
 <script src="/resources/sockjs.min.js" type="text/javascript"></script>
 <script src="/resources/stomp.min.js" type="text/javascript"></script>
 <script src="/resources/convertions.js" type="text/javascript"></script>
-<script src="/resources/globe.js" type="text/javascript"></script>
 <script src="/resources/toast.js" type="text/javascript"></script>
 <script src="/resources/aircrafts.js" type="text/javascript"></script>
 <script src="/resources/surfacevessels.js" type="text/javascript"></script>
+<script src="/resources/federates.js" type="text/javascript"></script>
 <script src="/resources/test/teste.js" type="text/javascript"></script>
 <script src="/resources/script.js" type="text/javascript"></script>
 
 <script>
 $( document ).ready(function() {
 
-	// Faxina de interface
+	// Liga os botoes aos metodos de resposta
 	bindButtons();
+
 	
-	// Conecta o WebSockets
-	connect();
 	// Inicia o Cesium
 	startMap();
+
+	
 	// Ajusta o viewport do cesium
 	applyMargins();
 
+	
 	// Leva o mapa para a area inicial
 	goToOperationArea( homeLocation );
 
-
+	
 	// Carrega um teste com dummies
-	loadTest();   
+	loadTest();
+
+	
+	// Conecta o WebSocket
+	connect();
+
+	
+	// Prepara os efeitos de Interface
+	prepareInterface();
+	   
 });
 </script>
 

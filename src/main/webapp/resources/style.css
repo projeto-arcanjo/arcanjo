@@ -107,3 +107,7 @@ body.dragging, body.dragging * {
     height : 26px;
 }
 
+.layerTable {
+	padding : 3px !important;
+}
+

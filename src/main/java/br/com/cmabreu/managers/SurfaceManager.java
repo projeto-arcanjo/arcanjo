@@ -70,8 +70,7 @@ public class SurfaceManager implements IEntityManager 	{
 	
 	@Override
 	public boolean isAKindOfMe( ObjectClassHandle classHandle ) {
-		int other = decoder.getObjectClassHandle( classHandle );
-		return  other == decoder.getObjectClassHandle( this.entityHandle );
+		return classHandle.equals( this.entityHandle );
 	}
 	
 	@Override
@@ -88,10 +87,9 @@ public class SurfaceManager implements IEntityManager 	{
 	
 	// Verifica se este controlador possui algum objeto instanciado com este handle
 	@Override
-	public SurfaceVessel doIHaveThisObject( ObjectInstanceHandle theObject ) {
-		int other = decoder.getObjectHandle( theObject );
+	public synchronized SurfaceVessel doIHaveThisObject( ObjectInstanceHandle theObject ) {
 		for( SurfaceVessel ac : this.vessels ) {
-			if( other == decoder.getObjectHandle( ac.getTheObjectInstance() ) ) return ac;
+			if( theObject.equals( ac.getTheObjectInstance() ) ) return ac;
 		}
 		return null;
 	}

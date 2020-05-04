@@ -54,8 +54,10 @@
 	href="/resources/img/arcanjo-tn.png" />
 
 <!-- Pace style -->
+<!-- 
 <link rel="stylesheet" href="${midasLocation}/plugins/pace/pace.min.css">
-
+ -->
+ 
 <!-- iCheck for checkboxes and radio inputs -->
 <link rel="stylesheet" href="${midasLocation}/plugins/iCheck/all.css">
 

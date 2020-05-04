@@ -40,7 +40,10 @@
 <script src="/resources/treant/Treant.js"></script>
     
 <!-- PACE -->
+<!--
 <script src="${midasLocation}/bower_components/PACE/pace.min.js"></script>
+-->
+
 <!-- SlimScroll -->
 <script src="${midasLocation}/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->

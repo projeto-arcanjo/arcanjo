@@ -21,6 +21,6 @@ public class FederationController {
 	public @ResponseBody Config getConfig() {
 		return new Config( federateService.getFederationName(), federateService.getHlaVersion() );
 	}	
-
+	
 	
 }

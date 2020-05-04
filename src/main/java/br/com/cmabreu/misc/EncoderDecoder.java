@@ -13,6 +13,7 @@ import hla.rti1516e.RtiFactoryFactory;
 import hla.rti1516e.encoding.DecoderException;
 import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.encoding.HLAboolean;
+import hla.rti1516e.encoding.HLAbyte;
 import hla.rti1516e.encoding.HLAfloat32BE;
 import hla.rti1516e.encoding.HLAfloat64BE;
 import hla.rti1516e.encoding.HLAinteger16BE;
@@ -189,6 +190,17 @@ public class EncoderDecoder {
 		return result;
 	}
 	
+	
+	public byte toHLAhandle( byte[] bytes ) {
+		HLAbyte value = encoderFactory.createHLAbyte();
+		try {
+			value.decode( bytes );
+			return value.getValue();
+		} catch ( DecoderException de ) {
+			de.printStackTrace();
+			return -1;
+		}
+	}
 	
 	public byte toByte( byte[] bytes ) {
 		HLAoctet value = encoderFactory.createHLAoctet();

@@ -15,6 +15,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import br.com.cmabreu.managers.AircraftManager;
+import br.com.cmabreu.managers.FederateManager;
 import br.com.cmabreu.managers.IEntityManager;
 import br.com.cmabreu.managers.SurfaceManager;
 import br.com.cmabreu.misc.EncoderDecoder;
@@ -130,6 +131,7 @@ public class FederateService {
     private void subscribeToAll() throws Exception {
 		this.addPhysicalManager( new AircraftManager( rtiamb, simpMessagingTemplate ) );
 		this.addPhysicalManager( new SurfaceManager( rtiamb, simpMessagingTemplate ) );
+		this.addPhysicalManager( new FederateManager( rtiamb, simpMessagingTemplate ) );
     }
     
 	private void createRtiAmbassador() throws Exception {
@@ -439,6 +441,6 @@ public class FederateService {
 		if( !found ) logger.error("Cannot find handle " + interactionClassHandle + " in my interaction list" );
 		
 	}
-	
+
     
 }
