@@ -2,14 +2,14 @@ var federates = [];
 
 function receiveFederate( payload ){
 	fireToast( 'info', 'Federado Online', payload.federateName );
-	federates[ payload.federateName ] = payload;
+	federates[ payload.hlaObjetName ] = payload;
 	var ac = Object.keys(federates).length;
 	$("#federatesCountNotification").text( ac );
 	$("#objectsPanelCounter").text( ac );
 }
 
 function updateFederate( payload ){
-	federates[ payload.federateName ] = payload;
+	federates[ payload.hlaObjetName ] = payload;
 	var ac = Object.keys(federates).length;
 	$("#federatesCountNotification").text( ac );
 	$("#objectsPanelCounter").text( ac );
@@ -30,10 +30,11 @@ function showFederados(){
 }
 
 function getTr( federate ){
+	
 	var icon = "nk.png";
 	var nome = federate.federateName;
 	var tipoCarto = federate.hlaObjetName;
-	var sourceName = federate.classTipo;
+	var sourceName = federate.classeTipo;
 	
 	var theDiv = "<div style='height:37px;width:100%;'>" +
 	"<div style='float:left;width:35px;height:36px;'>" +

@@ -109,9 +109,6 @@ public class Aircraft implements IEntity {
 			
 			
 		}
-		
-		logger.info("Aeronave " + this.marking.getText() + " -> " + this.orientationPhi + " Alt: " + this.altitude );
-
 		// Devolve este objeto atualizado para quem chamou. Vai que... 
 		return this;
 	}
