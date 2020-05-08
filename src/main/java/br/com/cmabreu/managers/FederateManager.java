@@ -90,7 +90,10 @@ public class FederateManager implements IEntityManager {
 		this.attributes.add( this.hLAobjectInstancesRegisteredHandle );
 		this.attributes.add( this.hLAobjectInstancesDiscoveredHandle );
         
-        this.rtiAmb.subscribeObjectClassAttributes( this.entityHandle, attributes );   
+        this.rtiAmb.subscribeObjectClassAttributes( this.entityHandle, attributes );
+        
+        // Agora que eu me inscrevi, preciso ser atualizado da situacao atual, caso entre com outros federados em execucao 
+        this.rtiAmb.requestAttributeValueUpdate( this.entityHandle, attributes, "INITIAL_REQUEST".getBytes() );
 		
 	}
 	
@@ -112,6 +115,7 @@ public class FederateManager implements IEntityManager {
 		objectName = objectName.replace("MOM.Federate(", "").replace(")","");
 		try {
 			Federate xpac = new Federate( theObject, this, objectName, classeTipo );
+			logger.info("Novo Federado " + objectName + " adicionado. Solicitando atributos...");
 			this.federates.add( xpac );
 			this.simpMessagingTemplate.convertAndSend("/federation/federate/discovered", new FederateDTO( xpac ) ); 
 			this.rtiAmb.requestAttributeValueUpdate( theObject, this.attributes, "ARCANJO_ATTR_REQ".getBytes() );
@@ -142,6 +146,7 @@ public class FederateManager implements IEntityManager {
 	 */
 	@Override
 	public synchronized int sendObjectsToInterface() {
+		logger.info( " > " + this.federates.size() + " objetos enviados por " + this.getClassFomName() );
 		for( Federate federate : this.federates  ) {
 			try {
 				this.simpMessagingTemplate.convertAndSend("/federation/federate/reflectvalues", new FederateDTO( federate ) );

@@ -15,7 +15,7 @@ public class JSONHelper {
 				String value = String.valueOf( jsonObj.get( key ) );
 				return value;
 			} else {
-				logger.error("Key '" + key + "' not found");
+				//logger.error("Key '" + key + "' not found");
 			}
 		} catch ( Exception e ) {
 			logger.error( e.getMessage() );

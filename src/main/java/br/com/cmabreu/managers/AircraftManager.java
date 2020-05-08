@@ -57,6 +57,7 @@ public class AircraftManager implements IEntityManager 	{
 	
 	@Override
 	public synchronized int sendObjectsToInterface() {
+		logger.info( " > " + this.aircrafts.size() + " objetos enviados por " + this.getClassFomName() );
 		for( Aircraft aircraft : aircrafts  ) {
 			try {
 				this.simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", new AircraftDTO( aircraft ) );
@@ -144,6 +145,9 @@ public class AircraftManager implements IEntityManager 	{
 		this.attributes.add( this.damageStateHandle );
         
         this.rtiAmb.subscribeObjectClassAttributes( this.entityHandle, attributes );   
+        
+        // Agora que eu me inscrevi, preciso ser atualizado da situacao atual, caso entre com outros federados em execucao 
+        this.rtiAmb.requestAttributeValueUpdate( this.entityHandle, attributes, "INITIAL_REQUEST".getBytes() );
         
 	}
 

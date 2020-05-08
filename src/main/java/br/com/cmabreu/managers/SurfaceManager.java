@@ -57,6 +57,7 @@ public class SurfaceManager implements IEntityManager 	{
 	
 	@Override
 	public int sendObjectsToInterface() {
+		logger.info( " > " + this.vessels.size() + " objetos enviados por " + this.getClassFomName() );
 		for( SurfaceVessel vessel : vessels ) {
 			try {
 				simpMessagingTemplate.convertAndSend("/platform/surface/reflectvalues", new SurfaceVesselDTO( vessel ) );
@@ -143,6 +144,10 @@ public class SurfaceManager implements IEntityManager 	{
         this.attributes.add( this.damageStateHandle );
         
         this.rtiAmb.subscribeObjectClassAttributes( this.entityHandle, this.attributes );   
+        
+        // Agora que eu me inscrevi, preciso ser atualizado da situacao atual, caso entre com outros federados em execucao 
+        this.rtiAmb.requestAttributeValueUpdate( this.entityHandle, attributes, "INITIAL_REQUEST".getBytes() );
+        
         
 	}
 

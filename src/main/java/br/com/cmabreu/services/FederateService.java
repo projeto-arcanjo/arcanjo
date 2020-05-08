@@ -38,6 +38,7 @@ import hla.rti1516e.RTIambassador;
 import hla.rti1516e.RtiFactoryFactory;
 import hla.rti1516e.SynchronizationPointFailureReason;
 import hla.rti1516e.TransportationTypeHandle;
+import hla.rti1516e.exceptions.NameNotFound;
 
 @Service
 public class FederateService {
@@ -108,12 +109,17 @@ public class FederateService {
     private void parseModules() throws Exception {
     	logger.info("Verificando Modulos");
     	moduleProcessorService.parseModules( this.modules );
-    	logger.info("Carregando Classes dos modulos...");
+    	
+    	logger.info("Solicitando Identificadores de Classes para a RTI...");
     	for( ObjectClass objectClass : moduleProcessorService.getObjectList().getList() ) {
-    		ObjectClassHandle objectClassHandle = this.rtiamb.getObjectClassHandle( objectClass.getMyName() );
-    		objectClass.setHandle( encoderDecoder.getObjectClassHandle( objectClassHandle ) );
+    		try {
+    			ObjectClassHandle objectClassHandle = this.rtiamb.getObjectClassHandle( objectClass.getMyName() );
+    			objectClass.setHandle( encoderDecoder.getObjectClassHandle( objectClassHandle ) );
+    		} catch( NameNotFound nnfe ) {
+    			logger.error( "Nome de Classe nao encontrado: " + nnfe.getMessage() );
+    		}
     	}
-    	logger.info("Classes carregadas.");
+    	logger.info("Identificadores de Classes carregados.");
     }
     
     
@@ -331,7 +337,6 @@ public class FederateService {
 		logger.info("uma interface solicitou todos os objetos cadastrados");
 		for( IEntityManager pe : this.physicalEntities ) {
 			int cc = pe.sendObjectsToInterface();
-			logger.info( cc + " objetos enviados por " + pe.getClassFomName() );
 			count = count + cc;
 		}
 		return count;
@@ -363,6 +368,7 @@ public class FederateService {
 		// Procura qual controlador deve processar este evendo, baseado no tipo de objeto
 		for( IEntityManager pe : this.physicalEntities ) {
 			if( pe.isAKindOfMe( theObjectClass ) ) {
+				logger.info("Designei " + objectName + " para o Gerenciador " + pe.getClassFomName() );
 				pe.discoverObjectInstance( theObject, theObjectClass, objectName, classeTipo );
 			}
 		}

@@ -81,7 +81,7 @@ public class Module implements Serializable {
 	}
 
 	public void processDataTypes( JSONObject jobj ) {
-		logger.info("Scanning data types...");
+		logger.info("Lendo tipos de dados...");
 		try {
 			if( jobj.has("simpleDataTypes") ) {
 				Object obj = jobj.get("simpleDataTypes");
@@ -109,7 +109,7 @@ public class Module implements Serializable {
 				if ( obj instanceof JSONObject ) processVariantRecordDataTypes( (JSONObject)obj );
 			}
 			
-			logger.info("Data types loaded.");
+			logger.info("Tipos de dados carregados.");
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
