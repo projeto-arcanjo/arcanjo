@@ -12,6 +12,7 @@ public interface IEntityManager {
 	void discoverObjectInstance( ObjectInstanceHandle theObject, ObjectClassHandle theObjectClass, String objectName, String classeTipo );
 	void removeObjectInstance( ObjectInstanceHandle theObject );
 	int sendObjectsToInterface();
-	void reflectAttributeValues( ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder );
+	boolean reflectAttributeValues( ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder );
 	String getClassFomName();
+	void subscribe() throws Exception;
 }

@@ -42,16 +42,18 @@ public class AircraftManager implements IEntityManager 	{
 	******************************************************************************************************************/
 
 	@Override
-	public void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
+	public boolean reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
 		Aircraft aircraft = this.doIHaveThisObject( theObject );
 		if( aircraft != null ) {
 			try {
 				aircraft.reflectAttributeValues( theObject, theAttributes, tag, sentOrder );
 				this.simpMessagingTemplate.convertAndSend("/platform/aircraft/reflectvalues", new AircraftDTO( aircraft ) );
+				return true;
 			} catch ( Exception e ) {
-				//
+				e.printStackTrace();
 			}
 		}
+		return false;
 	}
 	
 	
@@ -83,6 +85,7 @@ public class AircraftManager implements IEntityManager 	{
 			this.rtiAmb.requestAttributeValueUpdate( theObject, this.attributes, "ARCANJO_ATTR_REQ".getBytes() );
 		} catch ( Exception e ) {
 			logger.error("Erro ao criar aeronave: " + e.getMessage() );
+			e.printStackTrace();
 		}
 	}
 	
@@ -117,16 +120,15 @@ public class AircraftManager implements IEntityManager 	{
 	public AircraftManager( RTIambassador rtiAmb, SimpMessagingTemplate simpMessagingTemplate ) throws Exception {
 		this.classFomName = "BaseEntity.PhysicalEntity.Platform.Aircraft";
 		this.simpMessagingTemplate = simpMessagingTemplate;
-		logger.info("Aircraft Manager ativo");
 		this.decoder = new EncoderDecoder();
 		this.aircrafts = new ArrayList<Aircraft>();
 		this.rtiAmb = rtiAmb;
 		this.entityHandle = rtiAmb.getObjectClassHandle( classFomName );
-		this.subscribe();
+		logger.info("Aircraft Manager ativo");
 	}
 	
-	
-	private void subscribe() throws Exception {
+	@Override
+	public void subscribe() throws Exception {
 		this.entityTypeHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "EntityType");        
 		this.entityIdentifierHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "EntityIdentifier");  
 		this.spatialHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "Spatial");  
@@ -149,6 +151,8 @@ public class AircraftManager implements IEntityManager 	{
         // Agora que eu me inscrevi, preciso ser atualizado da situacao atual, caso entre com outros federados em execucao 
         this.rtiAmb.requestAttributeValueUpdate( this.entityHandle, attributes, "INITIAL_REQUEST".getBytes() );
         
+        logger.info("subscribe em " + this.classFomName);
+
 	}
 
 	/* GETTERS e SETTERS */

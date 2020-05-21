@@ -45,7 +45,9 @@
 					<div class="navbar-custom-menu">
 						<ul class="nav navbar-nav">
 							<!-- NOTIFICATIONS -->
+							<!-- 
 							<jsp:include page="notifications.jsp" />
+							 -->
 							<!-- USER DROP DOWN -->
 							<jsp:include page="userdropdown.jsp" />
 						</ul>

@@ -1,7 +1,10 @@
 var federates = [];
 
 function receiveFederate( payload ){
-	fireToast( 'info', 'Federado Online', payload.federateName );
+	console.log("Novo Federado");
+	console.log( payload );
+	
+	fireToast( 'info', 'Federado ' + payload.hlaObjetName + ' Online', payload.classeTipo );
 	federates[ payload.hlaObjetName ] = payload;
 	var ac = Object.keys(federates).length;
 	$("#federatesCountNotification").text( ac );
@@ -9,6 +12,10 @@ function receiveFederate( payload ){
 }
 
 function updateFederate( payload ){
+	
+	console.log("Atualizacao de Federado");
+	console.log( payload );
+	
 	federates[ payload.hlaObjetName ] = payload;
 	var ac = Object.keys(federates).length;
 	$("#federatesCountNotification").text( ac );
@@ -17,7 +24,7 @@ function updateFederate( payload ){
 	// Isso pode causar bagunça no painel. Os cards ficarão
 	// trocando de posição porque o federado está sempre sendo atualizado.
 	//jQuery("#"+payload.federateName).remove();
-	//getTr( payload );
+	getTr( payload );
 }
 
 function showFederados(){

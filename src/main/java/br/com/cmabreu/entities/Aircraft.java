@@ -48,7 +48,6 @@ public class Aircraft implements IEntity {
 	private float orientationTheta;
 	private float orientationPhi;
 	
-	
 	private double latitude;
 	private double longitude;
 	private double altitude;	
@@ -56,12 +55,12 @@ public class Aircraft implements IEntity {
 	public Aircraft( ObjectInstanceHandle theObjectInstance, AircraftManager manager, String objectName, String classeTipo ) throws Exception {
 		this.classeTipo = classeTipo;
 		this.encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory(); 
-		logger.info("Novo Aircraft criado: " + objectName );
 		this.objectInstanceHandle = theObjectInstance;
 		this.objectName = objectName;
 		this.manager = manager;
 		this.codec = new Codec( this.encoderFactory );
 		this.env = new Environment();
+		logger.info("Novo Aircraft criado: " + objectName );
 	}
 	
 	public String getClasseTipo() {
@@ -156,6 +155,13 @@ public class Aircraft implements IEntity {
 		this.orientationPsi = orientation[ SpatialVariant.PSI ];
 		this.orientationTheta = orientation[ SpatialVariant.THETA ]; 
 		this.orientationPhi = orientation[ SpatialVariant.PHI ]; 
+		
+		
+		// Nada importante. So para exibir o log
+		String temp = "NOVO_" + this.objectName;
+		try { temp = marking.getText(); } catch ( Exception e ) { };
+		logger.info( temp + " " + latitude + "," + longitude + " ( alt=" + altitude + ", head=" + orientationPsi + ", roll=" + this.orientationPhi + ", pitch=" + this.orientationTheta + " )" );
+		
 	}
 
 	

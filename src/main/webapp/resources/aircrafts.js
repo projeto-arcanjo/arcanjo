@@ -29,7 +29,7 @@ function atualizaAircraft( payload ){
 	}
 	
 	if( mapSimulationType == "VIRTUAL" ) {
-		console.log("ALERTA!! Atualizacao para VIRTUAL precisa resolver o problema da altitude como String")
+		//console.log("ALERTA!! Atualizacao para VIRTUAL precisa resolver o problema da altitude como String")
 	}
 	
 }
@@ -40,7 +40,7 @@ function criaAircraft( payload ){
 	if( mapSimulationType == "VIRTUAL" ) criaAircraftVirtual( payload );	
 }
 
-/*
+
 function criaAircraftVirtual( payload ){
 	// Cria o objeto na interface
 	// e posiciona ele no mapa
@@ -50,9 +50,10 @@ function criaAircraftVirtual( payload ){
 	console.log( getLatLogFromCartesian( new Cesium.Cartesian3( xyz[0], xyz[1], xyz[2] ) ) );	
 	
 	var po = getPositionOrientationData( payload );
-	
+
+	/*
 	var airPlane = new Cesium.Entity({
-		name : name : "AIRCRAFT_S",
+		name : "AIRCRAFT_S",
 		position: po.thePosition,
 		orientation: po.theOrientation,
 		show: true,
@@ -73,10 +74,11 @@ function criaAircraftVirtual( payload ){
 		}
 	});
 	viewer.entities.add( airPlane );
-
 	aircrafts[ payload.hlaObjetName ] = airPlane;
+	*/
+	
 }
-*/
+
 
 function criaAircraftContrutiva( payload ){
 	// https://spatialillusions.com/milsymbol/documentation.html

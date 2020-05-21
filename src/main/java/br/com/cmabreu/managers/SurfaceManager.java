@@ -41,17 +41,18 @@ public class SurfaceManager implements IEntityManager 	{
 	* 
 	******************************************************************************************************************/
 	@Override
-	public void reflectAttributeValues( ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder ) {
+	public boolean reflectAttributeValues( ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder ) {
 		SurfaceVessel vessel = this.doIHaveThisObject( theObject );
 		if( vessel != null ) {
 			try {
 				vessel.reflectAttributeValues( theObject, theAttributes, tag, sentOrder );
-				// Envia este objeto JA ATUALIZADO para a interface WEB
-				this.simpMessagingTemplate.convertAndSend("/platform/surface/reflectvalues", new SurfaceVesselDTO( vessel ) ); 
+				this.simpMessagingTemplate.convertAndSend("/platform/surface/reflectvalues", new SurfaceVesselDTO( vessel ) );
+				return true;
 			} catch ( Exception e ) {
-				//
+				e.printStackTrace();
 			}
 		}
+		return false;
 	}
 	
 	
@@ -116,16 +117,15 @@ public class SurfaceManager implements IEntityManager 	{
 	public SurfaceManager( RTIambassador rtiAmb, SimpMessagingTemplate simpMessagingTemplate ) throws Exception {
 		this.classFomName = "BaseEntity.PhysicalEntity.Platform.SurfaceVessel";
 		this.simpMessagingTemplate = simpMessagingTemplate;
-		logger.info("SurfaceVessel Manager ativo");
 		this.decoder = new EncoderDecoder();
 		this.vessels = new ArrayList<SurfaceVessel>();
 		this.rtiAmb = rtiAmb;
 		this.entityHandle = rtiAmb.getObjectClassHandle( classFomName );
-		this.subscribe();
+		logger.info("SurfaceVessel Manager ativo");
 	}
 	
-	
-	private void subscribe() throws Exception {
+	@Override
+	public void subscribe() throws Exception {
 		this.entityTypeHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "EntityType");        
 		this.entityIdentifierHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "EntityIdentifier");  
 		this.spatialHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "Spatial");  
@@ -148,7 +148,8 @@ public class SurfaceManager implements IEntityManager 	{
         // Agora que eu me inscrevi, preciso ser atualizado da situacao atual, caso entre com outros federados em execucao 
         this.rtiAmb.requestAttributeValueUpdate( this.entityHandle, attributes, "INITIAL_REQUEST".getBytes() );
         
-        
+        logger.info("subscribe em " + this.classFomName);
+
 	}
 
 	/* GETTERS e SETTERS */

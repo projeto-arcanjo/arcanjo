@@ -8,7 +8,7 @@ var east = -40;
 var north = -20;	
 var homeLocation = Cesium.Rectangle.fromDegrees(west, south, east, north);
 var natoSymbolSize=25;
-var mapSimulationType = "CONSTRUTIVA"; // "VIRTUAL" || "CONSTRUTIVA" 
+var mapSimulationType = "VIRTUAL"; // "VIRTUAL" || "CONSTRUTIVA" 
 
 function updateCounters(){
 	var ac = Object.keys(aircrafts).length;
@@ -20,6 +20,11 @@ function updateCounters(){
 
 function bindButtons(){
 
+    jQuery("#btnShowHidePanel").click( function(){
+    	//$("#layerContainer").toggle();
+    });
+
+    
     jQuery("#btnManager").click( function(){
     	window.open("/manager");
     });
@@ -29,7 +34,7 @@ function bindButtons(){
     	showFederados();
     });	
 
-    
+    /*
     jQuery("#btnConstrutiva").click( function(){
     	// mapSimulationType = "CONSTRUTIVA"
     	// Apagar as VIRTUAIS e reconstruir o mapa
@@ -39,18 +44,18 @@ function bindButtons(){
     	// mapSimulationType = "VIRTUAL"
     	// Apagar as CONSTRUTIVAS e reconstruir o mapa
     });	
-    
+    */
     
 }
 
 function getPositionOrientationData( payload ){
-	
-	console.log("ALERTA!! Altitude estah vindo como String !");
+		
+	console.log( payload );
 	
 	var result = {};
 	var lat = payload.latitude;
 	var lon = payload.longitude;
-	var alt = payload.altitude;
+	var alt = parseFloat( payload.altitude );
 	
 	// https://mathworld.wolfram.com/EulerAngles.html
 	// theta is pitch, psi is roll, and phi is yaw/heading.	

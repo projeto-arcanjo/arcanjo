@@ -22,7 +22,6 @@ import br.com.cmabreu.misc.EncoderDecoder;
 import br.com.cmabreu.misc.FederateAmbassador;
 import br.com.cmabreu.model.InteractionValue;
 import br.com.cmabreu.model.Module;
-import br.com.cmabreu.model.ObjectClassList;
 import br.com.cmabreu.rti1516e.InteractionClass;
 import br.com.cmabreu.rti1516e.ObjectClass;
 import hla.rti1516e.AttributeHandleValueMap;
@@ -138,6 +137,11 @@ public class FederateService {
 		this.addPhysicalManager( new AircraftManager( rtiamb, simpMessagingTemplate ) );
 		this.addPhysicalManager( new SurfaceManager( rtiamb, simpMessagingTemplate ) );
 		this.addPhysicalManager( new FederateManager( rtiamb, simpMessagingTemplate ) );
+		
+		for( IEntityManager pe : this.physicalEntities ) {
+			pe.subscribe();
+		}
+		
     }
     
 	private void createRtiAmbassador() throws Exception {
@@ -321,6 +325,8 @@ public class FederateService {
 		return constrained;
 	}
 	
+	
+	/*
 	private ObjectClass whatIsThis( ObjectClassHandle theObjectClass ) throws Exception {
 		ObjectClassList classList = moduleProcessorService.getObjectList();
 		
@@ -329,6 +335,7 @@ public class FederateService {
 		}
 		return null;
 	}
+	*/
 	
 
 	// Responde para a interface reenviando todos os objetos que foram recebidos
@@ -358,9 +365,12 @@ public class FederateService {
 		try {
 			// Metodo para descobrir que tipo de class eh esse objeto novo que entrou
 			// Isso vai ser util para o Gateway Portico-Pitch
-			ObjectClass objectClass = whatIsThis(theObjectClass);
-			classeTipo = objectClass.getMyName();
-			logger.info( "Novo objeto " + objectName + " e um " + classeTipo );
+			//ObjectClass objectClass = whatIsThis(theObjectClass);
+			//classeTipo = objectClass.getMyName();
+			
+			classeTipo = rtiamb.getObjectClassName( theObjectClass );
+			
+			logger.info( "Novo objeto " + objectName + " eh um " + classeTipo );
 		} catch( Exception e ) {
 			logger.warn("o novo objeto " + objectName + " nao pode ser classificado.");
 		}
@@ -376,13 +386,13 @@ public class FederateService {
 		
 	}
 
-	public void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
-		
+	public synchronized void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
 		// Procura qual controlador possui a instancia deste objeto e passa o evento pra ele
 		try {
 			for( IEntityManager pem : this.physicalEntities ) {
-				pem.reflectAttributeValues(theObject, theAttributes, tag, sentOrder);
+				if( pem.reflectAttributeValues(theObject, theAttributes, tag, sentOrder) ) return;
 			}
+			logger.error("Chegou atualizacao mas nao possuo este objeto: " + theObject.toString() );
 		} catch ( Exception e ) {
 			logger.error("Erro ao receber atualizacao de atributos");
 		}

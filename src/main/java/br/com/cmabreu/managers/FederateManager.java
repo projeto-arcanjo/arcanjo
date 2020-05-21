@@ -46,16 +46,14 @@ public class FederateManager implements IEntityManager {
 	public FederateManager( RTIambassador rtiAmb, SimpMessagingTemplate simpMessagingTemplate ) throws Exception {
 		this.classFomName = "HLAobjectRoot.HLAmanager.HLAfederate";
 		this.simpMessagingTemplate = simpMessagingTemplate;
-		logger.info("Federate Manager ativo");
 		this.federates = new ArrayList<Federate>();
 		this.rtiAmb = rtiAmb;
 		this.entityHandle = rtiAmb.getObjectClassHandle( classFomName );
-		this.subscribe();
+		logger.info("Federate Manager ativo");
 	}
 	
-	
-	private void subscribe() throws Exception {
-
+	@Override	
+	public void subscribe() throws Exception {
 		this.hLAfederateHandleHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "HLAfederateHandle");        
 		this.hLAfederateNameHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "HLAfederateName");  
 		this.hLAfederateTypeHandle = this.rtiAmb.getAttributeHandle( this.entityHandle, "HLAfederateType");  
@@ -94,6 +92,8 @@ public class FederateManager implements IEntityManager {
         
         // Agora que eu me inscrevi, preciso ser atualizado da situacao atual, caso entre com outros federados em execucao 
         this.rtiAmb.requestAttributeValueUpdate( this.entityHandle, attributes, "INITIAL_REQUEST".getBytes() );
+        
+        logger.info("subscribe em " + this.classFomName);
 		
 	}
 	
@@ -138,12 +138,6 @@ public class FederateManager implements IEntityManager {
 	}
 
 
-	/*
-	 * Neste caso especifico eu preciso responder com zero
-	 * pois um federado não eh um objeto (intancia de classe) e
-	 * sim um programa de simulacao que instancia os objetos.
-	 * Dessa forma eu nao posso interferir na contagem de objetos.
-	 */
 	@Override
 	public synchronized int sendObjectsToInterface() {
 		logger.info( " > " + this.federates.size() + " objetos enviados por " + this.getClassFomName() );
@@ -154,24 +148,30 @@ public class FederateManager implements IEntityManager {
 				e.printStackTrace();
 			}
 		}
+		/*
+		* Neste caso especifico eu preciso responder com zero
+		* pois um federado não eh um objeto (intancia de classe) e
+		* sim um programa de simulacao que instancia os objetos.
+		* Dessa forma eu nao posso interferir na contagem de objetos.
+		*/
 		return 0;
 	}
 	// **************************************************************************************************
 	
 	
 	@Override
-	public void reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
+	public boolean reflectAttributeValues(ObjectInstanceHandle theObject, AttributeHandleValueMap theAttributes, byte[] tag, OrderType sentOrder) {
 		Federate federate = this.doIHaveThisObject( theObject );
 		if( federate != null ) {
 			try {
 				federate.reflectAttributeValues( theObject, theAttributes, tag, sentOrder );
 				this.simpMessagingTemplate.convertAndSend("/federation/federate/reflectvalues", new FederateDTO( federate ) );
+				return true;
 			} catch ( Exception e ) {
 				e.printStackTrace();
 			}
 		}
-		
-		
+		return false;
 	}
 
 	@Override

@@ -32,6 +32,7 @@
 						<div id="toolBarStandard" class="btn-group"
 							style="float: left; opacity: 0.6;">
 							
+							<!-- 
 							<button title="Virtual" id="btnVirtual" type="button" class="btn btn-primary btn-flat"> 
 								<i class="fa fa-fighter-jet"></i>
 							</button>
@@ -40,6 +41,7 @@
 								type="button" class="btn btn-primary btn-flat">
 								<i class="fa fa-flag-checkered"></i>
 							</button>
+							 -->
 
 							<button title="Gerenciador" id="btnManager" style="margin-left:10px;" 
 								type="button" class="btn btn-primary btn-flat">
@@ -48,9 +50,13 @@
 
 							<button title="Atualizar Contadores" id="btnUpdateCouters" style="margin-left:10px;" 
 								type="button" class="btn btn-primary btn-flat">
-								<i class="fa fa-spin fa-refresh"></i>
+								<i class="fa fa-refresh"></i>
 							</button>
 
+							<button title="Mostrar/Ocultar Painel" id="btnShowHidePanel" style="margin-left:10px;" 
+								type="button" class="btn btn-primary btn-flat">
+								<i class="fa fa-server"></i>
+							</button>
 							
 						</div>
 											
