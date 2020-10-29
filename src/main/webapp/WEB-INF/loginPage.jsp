@@ -75,7 +75,7 @@
          <hr class="footer-fixed">
          <div class="container footer-container">
    <div class="pull-right hidden-xs">
-     Ministério da Defesa
+     Carlos M. Abreu || magno.mabreu@gmail.com
    </div>
    <!-- Default to the left -->
    <strong>Plataforma de Simulação Arcanjo</strong> 

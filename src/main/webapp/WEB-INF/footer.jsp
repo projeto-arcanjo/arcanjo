@@ -2,8 +2,8 @@
  <footer class="main-footer">
    <!-- To the right -->
    <div class="pull-right hidden-xs">
-     Ministério da Defesa
+     Caralos Magno Abreu
    </div>
    <!-- Default to the left -->
-   <strong>Plataforma de Simulação Arcanjo</strong> 
+   <strong>magno.mabreu@gmail.com</strong> 
  </footer>

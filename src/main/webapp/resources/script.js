@@ -8,7 +8,7 @@ var east = -40;
 var north = -20;	
 var homeLocation = Cesium.Rectangle.fromDegrees(west, south, east, north);
 var natoSymbolSize=25;
-var mapSimulationType = "VIRTUAL"; // "VIRTUAL" || "CONSTRUTIVA" 
+var mapSimulationType = "CONSTRUTIVA"; // "VIRTUAL" || "CONSTRUTIVA" 
 
 function updateCounters(){
 	var ac = Object.keys(aircrafts).length;

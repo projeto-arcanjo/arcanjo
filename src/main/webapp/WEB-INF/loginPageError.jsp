@@ -80,10 +80,10 @@
          <hr class="footer-fixed">
          <div class="container footer-container">
    <div class="pull-right hidden-xs">
-     Chefia de Logística e Mobilização
+     Carlos M. Abreu
    </div>
    <!-- Default to the left -->
-   <strong>Ministério da Defesa</strong> 
+   <strong>magno.mabreu@gmail.com</strong> 
          </div>
          
          
