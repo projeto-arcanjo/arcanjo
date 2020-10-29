@@ -80,8 +80,6 @@ function getPositionOrientationData( payload ){
 
 function connect() {
 	
-	alert( document.location.host );
-	
 	var socket = new SockJS('/ws');
 	stompClient = Stomp.over(socket);
 	stompClient.heartbeat.outgoing = 2000;
