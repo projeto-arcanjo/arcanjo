@@ -19,7 +19,7 @@ docker run --name arcanjo --hostname=arcanjo --network arcanjo \
 -e ARCANJO_DB_HOST=arcanjo-db \
 -e ARCANJO_DB_PORT=5432 \
 -e ARCANJO_DB=arcanjo \
--p 80:8080 \
+-p 8080:8080 \
 -d projetoarcanjo/arcanjo:1.0
 
 

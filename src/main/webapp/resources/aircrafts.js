@@ -87,8 +87,10 @@ function criaAircraftContrutiva( payload ){
 	var lat = payload.latitude;
 	var lon = payload.longitude;
 	var thePosition = Cesium.Cartesian3.fromDegrees( lon, lat, 0.00 );
-	
-	var svgUrl = "http://" + document.location.host + ":36002/SHAPMF------.png?size="+natoSymbolSize+"&additionalInformation=" + payload.hlaObjetName;
+
+	var ip = document.location.host.split(':',2)[0];
+
+	var svgUrl = "http://" + ip + ":36002/SHAPMF------.png?size="+natoSymbolSize+"&additionalInformation=" + payload.hlaObjetName;
 	
 	var airPlane = new Cesium.Entity({
 		name : "AIRCRAFT_C",
