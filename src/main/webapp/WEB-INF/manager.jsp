@@ -19,10 +19,6 @@
 				<div class="container-fluid">
 
 					<div class="navbar-header">
-						<img src="/resources/img/logo-md-2.png"
-							style="height: 45px; float: left; margin-top: 3px;"> <img
-							src="/resources/img/logo-md-1.png"
-							style="height: 43px; float: left; margin-right: 15px; margin-top: 7px;">
 						<a style="font-size: 25px;" href="#" class="navbar-brand"><b>Arcanjo</b>|RTI</a>
 					</div>
 
