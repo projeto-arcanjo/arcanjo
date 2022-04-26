@@ -90,7 +90,7 @@ function criaAircraftContrutiva( payload ){
 
 	var ip = document.location.host.split(':',2)[0];
 
-	var svgUrl = "http://" + ip + ":36002/SHAPMF------.png?size="+natoSymbolSize+"&additionalInformation=" + payload.hlaObjetName;
+	var svgUrl = "http://" + ip + ":35002/SHAPMF------.png?size="+natoSymbolSize+"&additionalInformation=" + payload.hlaObjetName;
 	
 	var airPlane = new Cesium.Entity({
 		name : "AIRCRAFT_C",

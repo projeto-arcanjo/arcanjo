@@ -81,11 +81,12 @@ function criaSurfaceVesselContrutiva( payload ){
 	var lon = payload.longitude;
 	var alt = 0;
 	var thePosition = Cesium.Cartesian3.fromDegrees( lon, lat, 0.00 );
+	var ip = document.location.host.split(':',2)[0];
 	
 	// https://spatialillusions.com/milsymbol/documentation.html
 	// https://spatialillusions.com/unitgenerator/
 	// MIL-STD-2525D
-	var svgUrl = "http://192.168.0.101:36002/10033000001202040400.png?size="+natoSymbolSize+"&additionalInformation=" + payload.hlaObjetName
+	var svgUrl = "http://" + ip + ":35002/10033000001202040400.png?size="+natoSymbolSize+"&additionalInformation=" + payload.hlaObjetName
 	/*
 	 * 		Simulation
 	 * 		Sea Surface
