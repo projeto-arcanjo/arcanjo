@@ -18,6 +18,7 @@ public class MainController extends BasicController  {
 	public String index(Model model, HttpSession session ) {
 		model.addAttribute( "user", getLoggedUser( session ) );
 		model.addAttribute( "midasLocation", getMidasLocation() );
+		model.addAttribute("milsymbolLocation", getMilsymbolLocation() );		
 		return "index";
 	}	
 
@@ -25,6 +26,7 @@ public class MainController extends BasicController  {
 	public String root(Model model, HttpSession session ) {
 		model.addAttribute( "user", getLoggedUser( session ) );
 		model.addAttribute( "midasLocation", getMidasLocation() );
+		model.addAttribute("milsymbolLocation", getMilsymbolLocation() );
 		return "index";
 	}	
 	
@@ -39,7 +41,7 @@ public class MainController extends BasicController  {
 	public String home(Model model, HttpSession session ) {
 		UserLesserDTO udto = getLoggedUser( session );
 		String result = "index";
-
+		model.addAttribute("milsymbolLocation", getMilsymbolLocation() );
 		model.addAttribute( "user", udto );
 		model.addAttribute( "midasLocation", getMidasLocation() );
 		return result;

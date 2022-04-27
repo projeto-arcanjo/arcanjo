@@ -82,14 +82,15 @@ function connect() {
 	
 	var socket = new SockJS('/ws');
 	stompClient = Stomp.over(socket);
-	stompClient.heartbeat.outgoing = 2000;
-	stompClient.heartbeat.incoming = 2000;    
+	//stompClient.heartbeat.outgoing = 2000;
+	//stompClient.heartbeat.incoming = 2000;    
 	stompClient.debug = null;
 	
 	stompClient.connect({}, function(frame) {
 		
 		stompClient.subscribe('/platform/aircraft/reflectvalues', function(notification) {
 			var payload =  JSON.parse( notification.body );
+			console.log( payload );
 			updateAircrafts( payload );
 		});
 		
@@ -101,21 +102,25 @@ function connect() {
 
 		stompClient.subscribe('/platform/surface/reflectvalues', function(notification) {
 			var payload =  JSON.parse( notification.body );
+			console.log( payload );
 			updateSurfaceVessel( payload );
 		});
 		
 		stompClient.subscribe('/platform/surface/discovered', function(notification) {
 			var payload =  JSON.parse( notification.body );
+			console.log( payload );
 			newSurfaceVessel( payload );
 		});		
 		
 		stompClient.subscribe('/federation/federate/discovered', function(notification) {
 			var payload =  JSON.parse( notification.body );
+			console.log( payload );
 			receiveFederate( payload );
 		});
 
 		stompClient.subscribe('/federation/federate/reflectvalues', function(notification) {
 			var payload =  JSON.parse( notification.body );
+			console.log( payload );
 			updateFederate( payload );
 		});
 

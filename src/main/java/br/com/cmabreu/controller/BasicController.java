@@ -20,6 +20,9 @@ public class BasicController {
 	
 	@Value("${terena.midas.location}")
 	private String midasLocation;   
+
+	@Value("${terena.milsymbol.location}")
+	private String milsymbolLocation;   	
 	
 	public String getMidasLocation() {
 		return this.midasLocation;
@@ -41,6 +44,9 @@ public class BasicController {
 	    
 	}	
 		
+	public String getMilsymbolLocation() {
+		return milsymbolLocation;
+	}
 	
 	public UserLesserDTO getLoggedUser( HttpSession session ) {
 		UserLesserDTO user = (UserLesserDTO)session.getAttribute( Constants.USEROBJECT ); 

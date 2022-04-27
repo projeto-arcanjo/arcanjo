@@ -165,10 +165,12 @@
 <script src="/resources/aircrafts.js" type="text/javascript"></script>
 <script src="/resources/surfacevessels.js" type="text/javascript"></script>
 <script src="/resources/federates.js" type="text/javascript"></script>
-<script src="/resources/test/teste.js" type="text/javascript"></script>
 <script src="/resources/script.js" type="text/javascript"></script>
 
 <script>
+
+var milsymbolLocation="${milsymbolLocation}";
+
 $( document ).ready(function() {
 
 	// Liga os botoes aos metodos de resposta
@@ -186,11 +188,6 @@ $( document ).ready(function() {
 	// Leva o mapa para a area inicial
 	goToOperationArea( homeLocation );
 
-	
-	// Carrega um teste com dummies
-	loadTest();
-
-	
 	// Conecta o WebSocket
 	connect();
 

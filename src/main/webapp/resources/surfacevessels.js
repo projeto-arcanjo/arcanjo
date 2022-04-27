@@ -86,7 +86,7 @@ function criaSurfaceVesselContrutiva( payload ){
 	// https://spatialillusions.com/milsymbol/documentation.html
 	// https://spatialillusions.com/unitgenerator/
 	// MIL-STD-2525D
-	var svgUrl = "http://" + ip + ":35002/10033000001202040400.png?size="+natoSymbolSize+"&additionalInformation=" + payload.hlaObjetName
+	var svgUrl = milsymbolLocation + ":35002/10033000001202040400.png?size="+natoSymbolSize+"&additionalInformation=" + payload.hlaObjetName
 	/*
 	 * 		Simulation
 	 * 		Sea Surface

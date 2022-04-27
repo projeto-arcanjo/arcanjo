@@ -17,6 +17,7 @@ docker run --name arcanjo --hostname=arcanjo --network arcanjo \
 -e ARCANJO_DB_USER=postgres \
 -e ARCANJO_DB_PASSWORD=@rcanjo \
 -e ARCANJO_DB_HOST=arcanjo-db \
+-e MILSYMBOL_SERVER_ADDRESS=http://sisgeodef.defesa.mil.br \
 -e ARCANJO_DB_PORT=5432 \
 -e ARCANJO_DB=arcanjo \
 -p 8080:8080 \
